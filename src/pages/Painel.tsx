@@ -5,7 +5,7 @@ import { supabase, ok } from '../lib/supabase';
 import { useEmpresa } from '../lib/empresa';
 import { useEstoque } from '../lib/dados';
 import { dinheiro, hoje, inicioMes, numero, data } from '../lib/format';
-import { PageHeader, Stat } from '../components/ui';
+import { Stat } from '../components/ui';
 import { STATUS_OS, type StatusOS } from '../lib/types';
 
 export function Painel() {
@@ -50,19 +50,22 @@ export function Painel() {
 
   return (
     <>
-      <PageHeader
-        titulo="Painel"
-        sub={new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
-        acoes={
-          <>
-            <Link to="/pdv" className="btn-primary"><ShoppingCart size={16} /> Nova venda</Link>
-            <Link to="/os?nova=1" className="btn-dark"><Wrench size={16} /> Nova OS</Link>
-            <Link to="/orcamentos?novo=1" className="btn-ghost"><FileText size={16} /> Orçamento</Link>
-          </>
-        }
-      />
+      <header className="fundo-heroi relative mb-6 overflow-hidden rounded-3xl p-5 text-white sm:p-6">
+        <div className="grade-tecnica pointer-events-none absolute inset-0" aria-hidden="true" />
+        <div className="relative flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Painel</h1>
+            <p className="mt-1 text-sm text-white/70">{new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/pdv" className="btn-primary"><ShoppingCart size={18} /> Nova venda</Link>
+            <Link to="/os?nova=1" className="btn-ghost"><Wrench size={18} /> Nova OS</Link>
+            <Link to="/orcamentos?novo=1" className="btn-ghost"><FileText size={18} /> Orçamento</Link>
+          </div>
+        </div>
+      </header>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <Stat titulo="Entradas hoje" valor={dinheiro(entradasHoje)} detalhe={dHoje ? `Despesas ${dinheiro(dHoje.despesas)}` : 'Nenhum lançamento'} destaque />
         <Stat titulo="Saldo do mês" valor={dinheiro(mes.ent - mes.des)} detalhe={`Entradas ${dinheiro(mes.ent)}`} />
         <Stat titulo="A receber (fiado)" valor={dinheiro(aReceber)} detalhe={vencidas ? `${vencidas} vencida(s)` : 'Nada vencido'} />
@@ -70,18 +73,18 @@ export function Painel() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <section className="card">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-            <h2 className="font-semibold">Ordens de serviço em andamento</h2>
-            <Link to="/os" className="text-sm text-brand-700 hover:underline">Ver todas</Link>
+        <section className="cartao">
+          <div className="flex items-center justify-between border-b border-linha px-4 py-3">
+            <h2 className="text-lg font-bold">Ordens de serviço em andamento</h2>
+            <Link to="/os" className="text-sm text-azul-escuro hover:underline">Ver todas</Link>
           </div>
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-linha">
             {(os.data ?? []).slice(0, 8).map((o) => (
               <li key={o.id}>
-                <Link to={`/os/${o.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50">
+                <Link to={`/os/${o.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-nevoa">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">#{o.numero} · {o.cliente?.nome ?? 'Sem cliente'}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="truncate text-sm font-medium"><span className="numero">#{o.numero}</span> · {o.cliente?.nome ?? 'Sem cliente'}</p>
+                    <p className="text-sm text-tinta-suave">
                       {o.veiculo ? `${o.veiculo.placa} ${o.veiculo.modelo ?? ''}` : 'Sem moto'}
                       {o.previsao && ` · previsão ${data(o.previsao)}`}
                     </p>
@@ -90,27 +93,27 @@ export function Painel() {
                 </Link>
               </li>
             ))}
-            {!os.data?.length && <li className="px-4 py-8 text-center text-sm text-slate-500">Nenhuma moto na oficina agora.</li>}
+            {!os.data?.length && <li className="px-4 py-8 text-center text-[15px] text-tinta-suave">Nenhuma moto na oficina agora.</li>}
           </ul>
         </section>
 
-        <section className="card">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-            <h2 className="flex items-center gap-2 font-semibold">
-              {baixo.length > 0 && <AlertTriangle size={18} className="text-amber-500" />} Estoque baixo
+        <section className="cartao">
+          <div className="flex items-center justify-between border-b border-linha px-4 py-3">
+            <h2 className="flex items-center gap-2 text-lg font-bold">
+              {baixo.length > 0 && <AlertTriangle size={18} className="text-ambar-vivo" />} Estoque baixo
             </h2>
-            <Link to="/estoque" className="text-sm text-brand-700 hover:underline">Estoque</Link>
+            <Link to="/estoque" className="text-sm text-azul-escuro hover:underline">Estoque</Link>
           </div>
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-linha">
             {baixo.slice(0, 8).map((p) => (
               <li key={p.produto_id} className="flex justify-between px-4 py-3 text-sm">
                 <span>{p.nome}</span>
-                <span className={Number(p.saldo) <= 0 ? 'font-semibold text-red-600' : 'text-amber-700'}>
-                  {numero(p.saldo)} / mín. {numero(p.estoque_minimo)}
+                <span className={Number(p.saldo) <= 0 ? 'font-semibold text-vermelho' : 'text-ambar'}>
+                  <span className="numero">{numero(p.saldo)}</span> / mín. <span className="numero">{numero(p.estoque_minimo)}</span>
                 </span>
               </li>
             ))}
-            {!baixo.length && <li className="px-4 py-8 text-center text-sm text-slate-500">Nenhum produto abaixo do mínimo.</li>}
+            {!baixo.length && <li className="px-4 py-8 text-center text-[15px] text-tinta-suave">Nenhum produto abaixo do mínimo.</li>}
           </ul>
         </section>
       </div>

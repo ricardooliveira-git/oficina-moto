@@ -34,22 +34,22 @@ export function ClienteSelect({
         onChange={(e) => setTexto(e.target.value)}
       />
       {aberto && (
-        <div className="absolute z-30 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
-          <button type="button" className="block w-full px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-50" onMouseDown={() => onChange(null)}>
+        <div className="absolute z-30 mt-1 max-h-64 w-full overflow-y-auto rounded-2xl border border-linha bg-papel shadow-lg">
+          <button type="button" className="block w-full px-3 py-2 text-left text-sm text-tinta-suave hover:bg-nevoa" onMouseDown={() => onChange(null)}>
             {placeholder}
           </button>
           {lista.map((c) => (
             <button
               type="button"
               key={c.id}
-              className="block w-full px-3 py-2 text-left text-sm hover:bg-brand-50"
+              className="block w-full px-3 py-2 text-left text-sm hover:bg-azul-claro"
               onMouseDown={() => onChange(c.id)}
             >
               <span className="font-medium">{c.nome}</span>
-              {c.whatsapp && <span className="ml-2 text-xs text-slate-500">{c.whatsapp}</span>}
+              {c.whatsapp && <span className="ml-2 text-sm text-tinta-suave">{c.whatsapp}</span>}
             </button>
           ))}
-          {!lista.length && <p className="px-3 py-2 text-sm text-slate-400">Nenhum cliente encontrado</p>}
+          {!lista.length && <p className="px-3 py-2 text-sm text-tinta-suave">Nenhum cliente encontrado</p>}
         </div>
       )}
     </div>
@@ -79,7 +79,7 @@ export function ProdutoBusca({
 
   return (
     <div className="relative">
-      <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+      <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-tinta-suave" />
       <input
         ref={ref}
         className="input pl-10"
@@ -89,21 +89,21 @@ export function ProdutoBusca({
         onKeyDown={(e) => { if (e.key === 'Enter' && lista[0]) { e.preventDefault(); escolher(lista[0]); } }}
       />
       {lista.length > 0 && (
-        <div className="absolute z-30 mt-1 max-h-80 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
+        <div className="absolute z-30 mt-1 max-h-80 w-full overflow-y-auto rounded-2xl border border-linha bg-papel shadow-lg">
           {lista.map((p) => {
             const sem = Number(p.saldo) <= 0;
             return (
               <button
                 type="button"
                 key={p.produto_id}
-                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-brand-50"
+                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-azul-claro"
                 onClick={() => escolher(p)}
               >
                 <span>
                   <span className="font-medium">{p.nome}</span>
-                  <span className={`ml-2 text-xs ${sem ? 'text-red-500' : 'text-slate-500'}`}>estoque {numero(p.saldo)}</span>
+                  <span className={`ml-2 text-sm ${sem ? 'text-vermelho' : 'text-tinta-suave'}`}>estoque <span className="numero">{numero(p.saldo)}</span></span>
                 </span>
-                <span className="font-semibold">{dinheiro(tipo === 'troca' ? p.preco_troca : p.preco_venda)}</span>
+                <span className="numero font-semibold">{dinheiro(tipo === 'troca' ? p.preco_troca : p.preco_venda)}</span>
               </button>
             );
           })}

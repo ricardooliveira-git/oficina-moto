@@ -33,24 +33,24 @@ export function ListaOrcamentos() {
 
   return (
     <>
-      <PageHeader titulo="Orçamentos" acoes={<button className="btn-primary" onClick={() => setParams({ novo: '1' })}><Plus size={16} /> Novo orçamento</button>} />
+      <PageHeader titulo="Orçamentos" acoes={<button className="btn-primary" onClick={() => setParams({ novo: '1' })}><Plus size={18} /> Novo orçamento</button>} />
       <div className="mb-4">
         <select className="input w-auto" value={status} onChange={(e) => setStatus(e.target.value as typeof status)}>
           <option value="">Todos</option>
           {Object.entries(STATUS_ORC).map(([k, v]) => <option key={k} value={k}>{v.nome}</option>)}
         </select>
       </div>
-      <div className="card">
+      <div className="cartao">
         {q.isLoading ? <div className="flex justify-center p-10"><Spinner /></div> : !q.data?.length ? <Vazio texto="Nenhum orçamento." /> : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-linha">
             {q.data.map((o) => (
               <li key={o.id}>
-                <Link to={`/orcamentos/${o.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-slate-50">
-                  <span className="text-sm"><b>#{o.numero}</b> · {o.cliente?.nome ?? 'Sem cliente'}{o.veiculo && ` · ${o.veiculo.placa}`} · {data(o.data)}</span>
+                <Link to={`/orcamentos/${o.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-nevoa">
+                  <span className="text-sm"><b className="numero">#{o.numero}</b> · {o.cliente?.nome ?? 'Sem cliente'}{o.veiculo && ` · ${o.veiculo.placa}`} · <span className="numero">{data(o.data)}</span></span>
                   <span className="flex items-center gap-3 text-sm">
                     <span className={`badge ${STATUS_ORC[o.status].cor}`}>{STATUS_ORC[o.status].nome}</span>
-                    <b>{dinheiro(o.total_normal)}</b>
-                    {Number(o.total_troca) !== Number(o.total_normal) && <span className="text-slate-500">c/ troca {dinheiro(o.total_troca)}</span>}
+                    <b className="numero">{dinheiro(o.total_normal)}</b>
+                    {Number(o.total_troca) !== Number(o.total_normal) && <span className="text-tinta-suave">c/ troca <span className="numero">{dinheiro(o.total_troca)}</span></span>}
                   </span>
                 </Link>
               </li>
@@ -162,14 +162,14 @@ export function DetalheOrcamento() {
 
   return (
     <>
-      <button className="mb-3 flex items-center gap-1 text-sm text-slate-500 hover:text-slate-800" onClick={() => nav('/orcamentos')}><ArrowLeft size={16} /> Orçamentos</button>
+      <button className="mb-3 flex items-center gap-1 text-sm text-tinta-suave hover:text-tinta" onClick={() => nav('/orcamentos')}><ArrowLeft size={18} /> Orçamentos</button>
       <PageHeader
         titulo={`Orçamento #${o.numero}`}
         sub={`${o.cliente?.nome ?? 'Sem cliente'}${o.veiculo ? ` · ${o.veiculo.placa} ${o.veiculo.modelo ?? ''}` : ''} · ${data(o.data)}${o.validade ? ` · válido até ${data(o.validade)}` : ''}`}
         acoes={
           <>
-            <Link className="btn-ghost" to={`/imprimir/orcamento/${o.id}`} target="_blank"><Printer size={16} /> Imprimir</Link>
-            {o.cliente?.whatsapp && <a className="btn-wa" target="_blank" rel="noreferrer" href={linkWhatsapp(o.cliente.whatsapp, textoWhats)}><MessageCircle size={16} /> Enviar</a>}
+            <Link className="btn-ghost" to={`/imprimir/orcamento/${o.id}`} target="_blank"><Printer size={18} /> Imprimir</Link>
+            {o.cliente?.whatsapp && <a className="btn-wa" target="_blank" rel="noreferrer" href={linkWhatsapp(o.cliente.whatsapp, textoWhats)}><MessageCircle size={18} /> Enviar</a>}
           </>
         }
       />
@@ -177,60 +177,60 @@ export function DetalheOrcamento() {
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <span className={`badge px-3 py-1.5 text-sm ${STATUS_ORC[o.status].cor}`}>{STATUS_ORC[o.status].nome}</span>
         {o.status === 'convertido' && o.convertido_id && (
-          <Link className="text-sm text-brand-700 hover:underline" to={o.convertido_em === 'os' ? `/os/${o.convertido_id}` : '/vendas'}>
+          <Link className="text-sm text-azul-escuro hover:underline" to={o.convertido_em === 'os' ? `/os/${o.convertido_id}` : '/vendas'}>
             Ver {o.convertido_em === 'os' ? 'OS' : 'venda'}
           </Link>
         )}
         {o.status === 'aberto' && (
           <>
-            <button className="btn-ghost py-1.5" onClick={() => status.mutate('aprovado')}>Cliente aprovou</button>
-            <button className="btn-ghost py-1.5" onClick={() => status.mutate('recusado')}>Cliente recusou</button>
+            <button className="btn-ghost" onClick={() => status.mutate('aprovado')}>Cliente aprovou</button>
+            <button className="btn-ghost" onClick={() => status.mutate('recusado')}>Cliente recusou</button>
           </>
         )}
-        {editavel && lista.length > 0 && <button className="btn-primary py-1.5" onClick={() => setConverter(true)}>Converter em OS ou venda</button>}
+        {editavel && lista.length > 0 && <button className="btn-primary" onClick={() => setConverter(true)}>Converter em OS ou venda</button>}
       </div>
 
-      <section className="card">
-        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-          <h2 className="font-semibold">Itens</h2>
-          {editavel && <button className="btn-ghost py-1.5" onClick={() => setAddServico(true)}><Plus size={14} /> Mão de obra</button>}
+      <section className="cartao">
+        <div className="flex items-center justify-between border-b border-linha px-4 py-3">
+          <h2 className="text-lg font-bold">Itens</h2>
+          {editavel && <button className="btn-ghost" onClick={() => setAddServico(true)}><Plus size={18} /> Mão de obra</button>}
         </div>
         {editavel && (
           <div className="p-3">
             <ProdutoBusca mostrarSemSaldo onEscolher={(p) => addItem.mutate({ tipo: 'peca', produto_id: p.produto_id, descricao: p.nome, quantidade: 1, preco_normal: p.preco_venda, preco_troca: p.preco_troca })} />
           </div>
         )}
-        {!lista.length ? <p className="px-4 py-6 text-sm text-slate-400">Adicione peças e serviços.</p> : (
+        {!lista.length ? <p className="px-4 py-6 text-sm text-tinta-suave">Adicione peças e serviços.</p> : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[620px]">
-              <thead className="border-y border-slate-100 bg-slate-50">
+              <thead className="border-y border-linha bg-nevoa">
                 <tr><th className="th">Item</th><th className="th text-center">Qtd</th><th className="th text-right">Preço</th><th className="th text-right">C/ troca</th><th className="th text-right">Subtotal</th><th className="th"></th></tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-linha">
                 {lista.map((i) => (
                   <tr key={i.id}>
-                    <td className="td">{i.tipo === 'servico' && <Wrench size={13} className="mr-1 inline text-slate-400" />}{i.descricao}</td>
-                    <td className="td"><input className="input mx-auto w-16 py-1 text-center" disabled={!editavel} defaultValue={String(i.quantidade).replace('.', ',')}
+                    <td className="td">{i.tipo === 'servico' && <Wrench size={13} className="mr-1 inline text-tinta-suave" />}{i.descricao}</td>
+                    <td className="td"><input className="input mx-auto w-16 text-center" disabled={!editavel} defaultValue={String(i.quantidade).replace('.', ',')}
                       onBlur={(e) => num(e.target.value) > 0 && num(e.target.value) !== Number(i.quantidade) && alterar.mutate({ itemId: i.id, d: { quantidade: num(e.target.value) } })} /></td>
-                    <td className="td"><input className="input ml-auto w-24 py-1 text-right" disabled={!editavel} defaultValue={String(i.preco_normal).replace('.', ',')}
+                    <td className="td"><input className="input ml-auto w-24 text-right" disabled={!editavel} defaultValue={String(i.preco_normal).replace('.', ',')}
                       onBlur={(e) => num(e.target.value) !== Number(i.preco_normal) && alterar.mutate({ itemId: i.id, d: { preco_normal: num(e.target.value) } })} /></td>
-                    <td className="td"><input className="input ml-auto w-24 py-1 text-right" disabled={!editavel || i.tipo === 'servico'} defaultValue={i.preco_troca === null ? '' : String(i.preco_troca).replace('.', ',')}
+                    <td className="td"><input className="input ml-auto w-24 text-right" disabled={!editavel || i.tipo === 'servico'} defaultValue={i.preco_troca === null ? '' : String(i.preco_troca).replace('.', ',')}
                       onBlur={(e) => alterar.mutate({ itemId: i.id, d: { preco_troca: e.target.value ? num(e.target.value) : null } })} /></td>
-                    <td className="td text-right font-semibold">{dinheiro(i.subtotal_normal)}</td>
-                    <td className="td">{editavel && <button className="text-slate-400 hover:text-red-600" onClick={() => remover.mutate(i.id)} aria-label="Remover"><Trash2 size={16} /></button>}</td>
+                    <td className="td numero text-right font-semibold">{dinheiro(i.subtotal_normal)}</td>
+                    <td className="td">{editavel && <button className="icone-acao" onClick={() => remover.mutate(i.id)} aria-label="Remover"><Trash2 size={18} /></button>}</td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="border-t border-slate-200">
-                <tr><td className="td font-semibold" colSpan={4}>Total</td><td className="td text-right text-lg font-bold">{dinheiro(o.total_normal)}</td><td /></tr>
-                {temTroca && <tr><td className="td text-slate-600" colSpan={4}>Total com troca da peça usada</td><td className="td text-right font-semibold">{dinheiro(o.total_troca)}</td><td /></tr>}
+              <tfoot className="border-t border-linha">
+                <tr><td className="td font-semibold" colSpan={4}>Total</td><td className="td numero text-right text-lg font-bold">{dinheiro(o.total_normal)}</td><td /></tr>
+                {temTroca && <tr><td className="td text-tinta-suave" colSpan={4}>Total com troca da peça usada</td><td className="td numero text-right font-semibold">{dinheiro(o.total_troca)}</td><td /></tr>}
               </tfoot>
             </table>
           </div>
         )}
       </section>
 
-      <section className="card mt-4 p-4">
+      <section className="cartao mt-4 p-4">
         <Field label="Observações (saem na impressão)">
           <textarea className="input" rows={2} disabled={!editavel} defaultValue={o.observacao ?? ''} onBlur={(e) => e.target.value !== (o.observacao ?? '') && salvarObs.mutate(e.target.value)} />
         </Field>

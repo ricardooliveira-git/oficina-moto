@@ -50,7 +50,7 @@ export function EmpresaGate({
 
   if (session === undefined || (session && membro.isLoading)) return <Carregando />;
   if (!session) return <>{login}</>;
-  if (membro.error) return <div className="p-8 text-red-600">{String(membro.error)}</div>;
+  if (membro.error) return <div className="p-8 font-medium text-vermelho">{String(membro.error)}</div>;
   if (!membro.data) return <>{criar}</>;
 
   const value: Ctx = {
@@ -65,7 +65,7 @@ export function EmpresaGate({
 export function Carregando() {
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand-200 border-t-brand-600" />
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-azul-claro border-t-azul" />
     </div>
   );
 }

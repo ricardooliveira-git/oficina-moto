@@ -2,30 +2,132 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-numero: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --nevoa: #f1f5fb;  --papel: #ffffff;  --tinta: #0b1626;
+  --tinta-suave: #5a6a80;  --linha: #e2e8f1;
+  --noite: #0b1626;  --noite-azul: #123a8c;
+
+  --azul: #2563eb;  --azul-escuro: #1d4ed8;  --azul-claro: #e9f0ff;
+  --ciano: #06b6d4; --ciano-escuro: #0e7490; --ciano-claro: #e3f8fc;
+  --vermelho: #dc2626; --vermelho-claro: #fdecec;
+  --ambar: #b45309; --ambar-vivo: #f59e0b; --ambar-claro: #fff4dd;
+  --zap: #138a47; --zap-escuro: #0e6e38; --zap-balao: #dcf8c6;
+
+  --movimento: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 @layer base {
-  body { @apply bg-slate-100 text-slate-900 antialiased; }
+  body {
+    @apply bg-nevoa text-tinta antialiased;
+    font-size: 16px;
+    line-height: 1.45;
+  }
   input, select, textarea { @apply text-base sm:text-sm; }
+  :focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
 }
 
 @layer components {
+  /* Cartão */
+  .cartao {
+    border-radius: 1.5rem;
+    border: 1px solid color-mix(in srgb, var(--linha) 80%, transparent);
+    background: var(--papel);
+    box-shadow: 0 1px 2px rgb(16 24 40 / .04), 0 10px 28px -14px rgb(16 24 40 / .18);
+  }
+
+  /* Botão principal e ícones em destaque */
+  .degrade-primario {
+    background-image: linear-gradient(135deg, #2563eb 0%, #3b82f6 55%, #06b6d4 120%);
+    box-shadow: 0 10px 24px -10px rgb(37 99 235 / .7);
+  }
+
+  /* Topo escuro (tela inicial e login) */
+  .fundo-heroi {
+    background-color: var(--noite);
+    background-image:
+      radial-gradient(110% 80% at 100% 0%, rgb(34 211 238 / .35) 0%, transparent 55%),
+      radial-gradient(80% 70% at 0% 100%, rgb(37 99 235 / .45) 0%, transparent 60%),
+      linear-gradient(150deg, #0b1626 0%, #123a8c 70%, #1d5cf0 100%);
+  }
+
+  /* Grade fina por cima do topo escuro */
+  .grade-tecnica {
+    background-image:
+      linear-gradient(rgb(255 255 255 / .06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / .06) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
+  }
+
+  /* Valores, datas e contadores */
+  .numero {
+    font-family: var(--font-numero);
+    font-variant-numeric: tabular-nums;
+  }
+
   .input {
-    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition
-      focus:border-brand-500 focus:ring-2 focus:ring-brand-100 disabled:bg-slate-100;
+    @apply min-h-12 w-full rounded-2xl border border-linha bg-papel px-3 py-2 disabled:bg-nevoa;
+    transition: border-color .2s var(--movimento), box-shadow .2s var(--movimento);
   }
-  .label { @apply mb-1 block text-xs font-medium text-slate-600; }
-  .card { @apply rounded-xl border border-slate-200 bg-white shadow-sm; }
+  .input:focus {
+    border-color: var(--azul);
+    box-shadow: 0 0 0 4px rgb(37 99 235 / .15);
+    outline: none;
+  }
+  .label { @apply mb-1 block text-sm font-semibold text-tinta-suave; }
+
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold
-      transition disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold
+      active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50;
+    transition: transform .2s var(--movimento), background-color .2s var(--movimento), filter .2s var(--movimento);
   }
-  .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700; }
-  .btn-dark { @apply btn bg-ink-900 text-white hover:bg-ink-800; }
-  .btn-ghost { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50; }
-  .btn-danger { @apply btn border border-red-200 bg-white text-red-600 hover:bg-red-50; }
-  .btn-wa { @apply btn bg-emerald-600 text-white hover:bg-emerald-700; }
-  .th { @apply px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500; }
+  .btn-primary { @apply btn degrade-primario text-white hover:brightness-110; }
+  .btn-dark { @apply btn bg-noite text-white hover:bg-noite-azul; }
+  .btn-ghost { @apply btn border border-linha bg-papel text-tinta hover:bg-nevoa; }
+  .btn-danger { @apply btn border border-vermelho bg-papel text-vermelho hover:bg-vermelho-claro; }
+  .btn-wa { @apply btn bg-zap text-white hover:bg-zap-escuro; }
+
+  /* Ação só com ícone, sem fundo (ex.: lixeira) */
+  .icone-acao {
+    @apply inline-flex min-h-12 min-w-12 items-center justify-center rounded-2xl text-tinta-suave
+      hover:bg-vermelho-claro hover:text-vermelho active:scale-[.98];
+    transition: transform .2s var(--movimento), background-color .2s var(--movimento);
+  }
+
+  /* Botões segmentados */
+  .segmentado { @apply inline-flex min-h-12 rounded-xl border border-linha bg-papel p-1; }
+  .segmento { @apply rounded-lg px-4 text-[15px] font-semibold text-tinta-suave; }
+  .segmento-ativo { @apply bg-noite text-white; }
+
+  /* Pílula selecionável */
+  .pilula {
+    @apply inline-flex min-h-10 cursor-pointer items-center rounded-full px-4 text-sm font-semibold active:scale-[.98];
+    transition: transform .2s var(--movimento);
+  }
+
+  .th { @apply px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-tinta-suave; }
   .td { @apply px-3 py-2 text-sm; }
   .badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold; }
+
+  /* "backwards": sem transform residual, que prenderia position: fixed dos filhos */
+  .entra { animation: entra .32s var(--movimento) backwards; }
+  .modal-entra { animation: modal-entra .28s var(--movimento) backwards; }
+}
+
+@keyframes entra {
+  from { opacity: 0; transform: translateY(10px); }
+}
+@keyframes modal-entra {
+  from { opacity: 0; transform: translateY(24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entra, .modal-entra { animation: none; }
+  .btn, .icone-acao, .pilula { transition: none; }
+  .btn:active, .icone-acao:active, .pilula:active { transform: none; }
 }
 
 @media print {

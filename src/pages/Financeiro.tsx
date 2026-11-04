@@ -18,9 +18,9 @@ export function Financeiro() {
     <>
       <PageHeader titulo="Financeiro" />
       <div className="mb-4 flex flex-wrap items-end gap-3">
-        <div className="inline-flex rounded-lg border border-slate-300 bg-white p-1">
+        <div className="segmentado">
           {([['resumo', 'Resumo'], ['despesas', 'Despesas'], ['receber', 'A receber']] as const).map(([k, n]) => (
-            <button key={k} className={`rounded-md px-4 py-1.5 text-sm font-semibold ${aba === k ? 'bg-ink-900 text-white' : 'text-slate-600'}`} onClick={() => setAba(k)}>{n}</button>
+            <button key={k} className={`segmento ${aba === k ? 'segmento-ativo' : ''}`} onClick={() => setAba(k)}>{n}</button>
           ))}
         </div>
         {aba !== 'receber' && (
@@ -54,30 +54,30 @@ function Resumo({ de, ate }: { de: string; ate: string }) {
 
   return (
     <>
-      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-5">
         <Stat titulo="Serviços (OS)" valor={dinheiro(t.s)} />
         <Stat titulo="Vendas" valor={dinheiro(t.v)} />
         <Stat titulo="Vendas c/ troca" valor={dinheiro(t.vt)} />
         <Stat titulo="Despesas" valor={dinheiro(t.d)} />
-        <Stat titulo="Saldo" valor={<span className={saldo < 0 ? 'text-red-600' : ''}>{dinheiro(saldo)}</span>} destaque />
+        <Stat titulo="Saldo" valor={<span className={saldo < 0 ? 'text-vermelho' : ''}><span className="numero">{dinheiro(saldo)}</span></span>} destaque />
       </div>
-      <div className="card overflow-x-auto">
+      <div className="cartao overflow-x-auto">
         {q.isLoading ? <div className="flex justify-center p-10"><Spinner /></div> : !l.length ? <Vazio texto="Sem movimento no período." /> : (
           <table className="w-full min-w-[600px]">
-            <thead className="border-b border-slate-200 bg-slate-50">
+            <thead className="border-b border-linha bg-nevoa">
               <tr><th className="th">Dia</th><th className="th text-right">Serviços</th><th className="th text-right">Vendas</th><th className="th text-right">C/ troca</th><th className="th text-right">Despesas</th><th className="th text-right">Saldo</th></tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-linha">
               {l.map((r) => {
                 const s = Number(r.servicos) + Number(r.vendas) + Number(r.vendas_troca) - Number(r.despesas);
                 return (
                   <tr key={r.data}>
-                    <td className="td font-medium">{data(r.data)}</td>
-                    <td className="td text-right">{dinheiro(r.servicos)}</td>
-                    <td className="td text-right">{dinheiro(r.vendas)}</td>
-                    <td className="td text-right">{dinheiro(r.vendas_troca)}</td>
-                    <td className="td text-right text-red-600">{Number(r.despesas) ? `-${dinheiro(r.despesas)}` : '—'}</td>
-                    <td className={`td text-right font-semibold ${s < 0 ? 'text-red-600' : ''}`}>{dinheiro(s)}</td>
+                    <td className="numero td font-medium">{data(r.data)}</td>
+                    <td className="td numero text-right">{dinheiro(r.servicos)}</td>
+                    <td className="td numero text-right">{dinheiro(r.vendas)}</td>
+                    <td className="td numero text-right">{dinheiro(r.vendas_troca)}</td>
+                    <td className="td numero text-right text-vermelho">{Number(r.despesas) ? `-${dinheiro(r.despesas)}` : '—'}</td>
+                    <td className={`td numero text-right font-semibold ${s < 0 ? 'text-vermelho' : ''}`}><span className="numero">{dinheiro(s)}</span></td>
                   </tr>
                 );
               })}
@@ -85,7 +85,7 @@ function Resumo({ de, ate }: { de: string; ate: string }) {
           </table>
         )}
       </div>
-      <p className="mt-2 text-xs text-slate-500">Vendas a receber entram no dia da venda; o recebimento do fiado aparece na aba "A receber".</p>
+      <p className="mt-2 text-sm text-tinta-suave">Vendas a receber entram no dia da venda; o recebimento do fiado aparece na aba "A receber".</p>
     </>
   );
 }
@@ -126,27 +126,27 @@ function Despesas({ de, ate }: { de: string; ate: string }) {
   return (
     <>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-600">
-          Total {dinheiro(l.reduce((a, d) => a + Number(d.valor), 0))}
-          {porCat.map((c) => <span key={c.n} className="ml-3 text-slate-500">{c.n}: {dinheiro(c.v)}</span>)}
+        <p className="text-sm text-tinta-suave">
+          Total <span className="numero">{dinheiro(l.reduce((a, d) => a + Number(d.valor), 0))}</span>
+          {porCat.map((c) => <span key={c.n} className="ml-3 text-tinta-suave">{c.n}: <span className="numero">{dinheiro(c.v)}</span></span>)}
         </p>
-        <button className="btn-primary" onClick={() => setNova(true)}><Plus size={16} /> Nova despesa</button>
+        <button className="btn-primary" onClick={() => setNova(true)}><Plus size={18} /> Nova despesa</button>
       </div>
-      <div className="card overflow-x-auto">
+      <div className="cartao overflow-x-auto">
         {q.isLoading ? <div className="flex justify-center p-10"><Spinner /></div> : !l.length ? <Vazio texto="Nenhuma despesa no período." /> : (
           <table className="w-full min-w-[600px]">
-            <thead className="border-b border-slate-200 bg-slate-50">
+            <thead className="border-b border-linha bg-nevoa">
               <tr><th className="th">Data</th><th className="th">Descrição</th><th className="th">Categoria</th><th className="th">Pago com</th><th className="th text-right">Valor</th><th className="th"></th></tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-linha">
               {l.map((d) => (
                 <tr key={d.id}>
-                  <td className="td">{data(d.data_pagamento)}</td>
-                  <td className="td">{d.descricao}{d.observacao && <span className="block text-xs text-slate-500">{d.observacao}</span>}</td>
+                  <td className="numero td">{data(d.data_pagamento)}</td>
+                  <td className="td">{d.descricao}{d.observacao && <span className="block text-sm text-tinta-suave">{d.observacao}</span>}</td>
                   <td className="td">{CATEGORIAS_DESPESA[d.categoria]}</td>
                   <td className="td">{d.forma?.descricao ?? '—'}</td>
-                  <td className="td text-right font-semibold">{dinheiro(d.valor)}</td>
-                  <td className="td"><button className="text-slate-400 hover:text-red-600" onClick={() => excluir.mutate(d.id)} aria-label="Excluir"><Trash2 size={16} /></button></td>
+                  <td className="td numero text-right font-semibold">{dinheiro(d.valor)}</td>
+                  <td className="td"><button className="icone-acao" onClick={() => excluir.mutate(d.id)} aria-label="Excluir"><Trash2 size={18} /></button></td>
                 </tr>
               ))}
             </tbody>
@@ -213,26 +213,27 @@ function Receber() {
         <Stat titulo="Total a receber" valor={dinheiro(l.reduce((a, c) => a + Number(c.valor) - Number(c.valor_pago), 0))} destaque />
         <Stat titulo="Vencidas" valor={l.filter((c) => c.vencimento < hoje()).length} />
       </div>
-      <div className="card">
+      <div className="cartao">
         {q.isLoading ? <div className="flex justify-center p-10"><Spinner /></div> : !l.length ? <Vazio texto="Nenhuma conta em aberto." /> : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-linha">
             {l.map((c) => {
               const resta = Number(c.valor) - Number(c.valor_pago);
               const vencida = c.vencimento < hoje();
+              const venceHoje = c.vencimento === hoje();
               return (
                 <li key={c.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-40 flex-1">
                     <p className="font-medium">{c.cliente?.nome ?? '—'}</p>
-                    <p className={`text-xs ${vencida ? 'font-semibold text-red-600' : 'text-slate-500'}`}>
-                      {c.origem === 'os' ? 'OS' : 'Venda'} de {data(c.criado_em)} · vence {data(c.vencimento)}
+                    <p className={`text-sm ${vencida ? 'font-semibold text-vermelho' : venceHoje ? 'font-semibold text-ambar' : 'text-tinta-suave'}`}>
+                      {c.origem === 'os' ? 'OS' : 'Venda'} de <span className="numero">{data(c.criado_em)}</span> · vence <span className="numero">{data(c.vencimento)}</span>
                       {Number(c.valor_pago) > 0 && ` · já pagou ${dinheiro(c.valor_pago)}`}
                     </p>
                   </div>
-                  <b>{dinheiro(resta)}</b>
+                  <b className="numero">{dinheiro(resta)}</b>
                   {c.cliente?.whatsapp && (
                     <a className="btn-wa px-3" target="_blank" rel="noreferrer" title="Cobrar no WhatsApp"
                       href={linkWhatsapp(c.cliente.whatsapp, `Olá, ${c.cliente.nome.split(' ')[0]}! Aqui é da ${empresa.nome}. Consta em aberto o valor de ${dinheiro(resta)}${vencida ? `, vencido em ${data(c.vencimento)}` : `, com vencimento em ${data(c.vencimento)}`}. Podemos combinar o pagamento?`)}>
-                      <MessageCircle size={16} />
+                      <MessageCircle size={18} />
                     </a>
                   )}
                   <button className="btn-primary" onClick={() => { setConta(c); setValor(resta.toFixed(2).replace('.', ',')); setForma(recebiveis.find((f) => f.descricao === 'Pix')?.id ?? recebiveis[0]?.id ?? ''); }}>
