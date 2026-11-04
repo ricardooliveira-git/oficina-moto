@@ -47,9 +47,9 @@ export function PagamentoModal({
 
   return (
     <Modal aberto={aberto} onFechar={onFechar} titulo="Receber pagamento">
-      <div className="mb-4 rounded-xl bg-ink-900 p-4 text-white">
-        <p className="text-xs uppercase tracking-wide text-slate-300">Total</p>
-        <p className="text-3xl font-bold">{dinheiro(total)}</p>
+      <div className="mb-4 fundo-heroi rounded-2xl p-4 text-white">
+        <p className="text-sm font-semibold text-white/70">Total</p>
+        <p className="numero text-3xl font-bold">{dinheiro(total)}</p>
       </div>
 
       <div className="space-y-2">
@@ -70,7 +70,7 @@ export function PagamentoModal({
             />
             {linhas.length > 1 && (
               <button className="btn-ghost px-2" onClick={() => setLinhas(linhas.filter((_, j) => j !== i))} aria-label="Remover">
-                <Trash2 size={16} />
+                <Trash2 size={18} />
               </button>
             )}
           </div>
@@ -79,18 +79,18 @@ export function PagamentoModal({
           className="btn-ghost w-full"
           onClick={() => setLinhas([...linhas, { forma_id: ativas[0]?.id ?? '', valor: calc.falta.toFixed(2).replace('.', ',') }])}
         >
-          <Plus size={16} /> Dividir em outra forma
+          <Plus size={18} /> Dividir em outra forma
         </button>
       </div>
 
       <dl className="mt-4 space-y-1 text-sm">
-        <div className="flex justify-between"><dt>Recebido agora</dt><dd className="font-semibold">{dinheiro(calc.pago)}</dd></div>
-        {calc.troco > 0 && <div className="flex justify-between text-emerald-700"><dt>Troco</dt><dd className="font-bold">{dinheiro(calc.troco)}</dd></div>}
+        <div className="flex justify-between"><dt>Recebido agora</dt><dd className="numero font-semibold">{dinheiro(calc.pago)}</dd></div>
+        {calc.troco > 0 && <div className="flex justify-between text-zap-escuro"><dt>Troco</dt><dd className="numero font-bold">{dinheiro(calc.troco)}</dd></div>}
         {calc.falta > 0.004 && (
-          <div className="flex justify-between text-amber-700"><dt>Fica a receber (fiado)</dt><dd className="font-bold">{dinheiro(calc.falta)}</dd></div>
+          <div className="flex justify-between text-ambar"><dt>Fica a receber (fiado)</dt><dd className="numero font-bold">{dinheiro(calc.falta)}</dd></div>
         )}
       </dl>
-      {bloqueado && <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">Para deixar valor a receber, escolha o cliente antes.</p>}
+      {bloqueado && <p className="mt-3 rounded-2xl bg-ambar-claro p-3 text-sm text-ambar">Para deixar valor a receber, escolha o cliente antes.</p>}
 
       <button
         className="btn-primary mt-5 w-full py-3 text-base"

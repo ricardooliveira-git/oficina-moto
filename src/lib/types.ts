@@ -26,20 +26,20 @@ export interface EstoqueLinha {
 export interface Pagamento { forma_id: string; valor: number }
 
 export const STATUS_OS: Record<StatusOS, { nome: string; cor: string }> = {
-  aberta: { nome: 'Aberta', cor: 'bg-sky-100 text-sky-700' },
-  em_execucao: { nome: 'Em execução', cor: 'bg-amber-100 text-amber-700' },
-  aguardando_peca: { nome: 'Aguardando peça', cor: 'bg-purple-100 text-purple-700' },
-  pronta: { nome: 'Pronta', cor: 'bg-emerald-100 text-emerald-700' },
-  entregue: { nome: 'Entregue', cor: 'bg-slate-200 text-slate-700' },
-  cancelada: { nome: 'Cancelada', cor: 'bg-red-100 text-red-700' },
+  aberta: { nome: 'Aberta', cor: 'bg-azul-claro text-azul-escuro' },
+  em_execucao: { nome: 'Em execução', cor: 'bg-ciano-claro text-ciano-escuro' },
+  aguardando_peca: { nome: 'Aguardando peça', cor: 'bg-ambar-claro text-ambar' },
+  pronta: { nome: 'Pronta', cor: 'bg-zap-balao text-zap-escuro' },
+  entregue: { nome: 'Entregue', cor: 'bg-linha text-tinta' },
+  cancelada: { nome: 'Cancelada', cor: 'bg-vermelho-claro text-vermelho' },
 };
 
 export const STATUS_ORC: Record<StatusOrc, { nome: string; cor: string }> = {
-  aberto: { nome: 'Aberto', cor: 'bg-sky-100 text-sky-700' },
-  aprovado: { nome: 'Aprovado', cor: 'bg-emerald-100 text-emerald-700' },
-  recusado: { nome: 'Recusado', cor: 'bg-red-100 text-red-700' },
-  convertido: { nome: 'Convertido', cor: 'bg-slate-200 text-slate-700' },
-  cancelado: { nome: 'Cancelado', cor: 'bg-red-100 text-red-700' },
+  aberto: { nome: 'Aberto', cor: 'bg-azul-claro text-azul-escuro' },
+  aprovado: { nome: 'Aprovado', cor: 'bg-zap-balao text-zap-escuro' },
+  recusado: { nome: 'Recusado', cor: 'bg-vermelho-claro text-vermelho' },
+  convertido: { nome: 'Convertido', cor: 'bg-linha text-tinta' },
+  cancelado: { nome: 'Cancelado', cor: 'bg-vermelho-claro text-vermelho' },
 };
 
 export const CATEGORIAS_DESPESA = {

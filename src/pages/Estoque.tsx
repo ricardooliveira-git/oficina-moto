@@ -45,9 +45,9 @@ export function Estoque() {
       <PageHeader
         titulo="Estoque"
         sub="O saldo é a soma das entradas, vendas, OS e ajustes — nada é calculado à mão"
-        acoes={<button className="btn-primary" onClick={() => setProduto({ margem_pct: 50 })}><Plus size={16} /> Novo produto</button>}
+        acoes={<button className="btn-primary" onClick={() => setProduto({ margem_pct: 50 })}><Plus size={18} /> Novo produto</button>}
       />
-      <div className="mb-4 grid grid-cols-3 gap-3">
+      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Stat titulo="Produtos" valor={estoque.length} />
         <Stat titulo="Valor em estoque (custo)" valor={dinheiro(valorTotal)} />
         <Stat titulo="Abaixo do mínimo" valor={estoque.filter((p) => p.abaixo_minimo).length} />
@@ -61,44 +61,44 @@ export function Estoque() {
         </select>
       </div>
 
-      <div className="card overflow-x-auto">
+      <div className="cartao overflow-x-auto">
         {isLoading ? (
           <div className="flex justify-center p-10"><Spinner /></div>
         ) : !lista.length ? (
           <Vazio texto={estoque.length ? 'Nenhum produto encontrado.' : 'Cadastre seus produtos e dê entrada no estoque.'} />
         ) : (
           <table className="w-full min-w-[760px]">
-            <thead className="border-b border-slate-200 bg-slate-50">
+            <thead className="border-b border-linha bg-nevoa">
               <tr>
                 <th className="th w-12"></th><th className="th">Produto</th><th className="th text-right">Saldo</th>
                 <th className="th text-right">Custo</th><th className="th text-right">Venda</th><th className="th text-right">C/ troca</th>
                 <th className="th text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-linha">
               {lista.map((p) => {
                 const foto = urlFoto(fotos.data?.[p.produto_id] ?? null);
                 return (
-                  <tr key={p.produto_id} className="hover:bg-slate-50">
+                  <tr key={p.produto_id} className="hover:bg-nevoa">
                     <td className="td">
-                      {foto ? <img src={foto} alt="" className="h-9 w-9 rounded-md object-cover" /> : <div className="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 text-slate-300"><ImageOff size={16} /></div>}
+                      {foto ? <img src={foto} alt="" className="h-9 w-9 rounded-xl object-cover" /> : <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-nevoa text-tinta-suave"><ImageOff size={18} /></div>}
                     </td>
                     <td className="td">
                       <p className="font-medium">{p.nome}</p>
-                      {p.codigo_barras && <p className="text-xs text-slate-500">{p.codigo_barras}</p>}
+                      {p.codigo_barras && <p className="text-sm text-tinta-suave">{p.codigo_barras}</p>}
                     </td>
-                    <td className={`td text-right font-semibold ${Number(p.saldo) <= 0 ? 'text-red-600' : p.abaixo_minimo ? 'text-amber-600' : ''}`}>
+                    <td className={`td numero text-right font-semibold ${Number(p.saldo) <= 0 ? 'text-vermelho' : p.abaixo_minimo ? 'text-ambar' : ''}`}>
                       {numero(p.saldo)}
                     </td>
-                    <td className="td text-right">{dinheiro(p.custo)}</td>
-                    <td className="td text-right">{dinheiro(p.preco_venda)}</td>
-                    <td className="td text-right">{dinheiro(p.preco_troca)}</td>
+                    <td className="td numero text-right">{dinheiro(p.custo)}</td>
+                    <td className="td numero text-right">{dinheiro(p.preco_venda)}</td>
+                    <td className="td numero text-right">{dinheiro(p.preco_troca)}</td>
                     <td className="td">
                       <div className="flex justify-end gap-1">
-                        <button className="btn-primary px-2 py-1.5" title="Entrada" onClick={() => setEntrada(p)}><PackagePlus size={16} /></button>
-                        <button className="btn-ghost px-2 py-1.5" title="Ajuste de inventário" onClick={() => setAjuste(p)}><ClipboardCheck size={16} /></button>
-                        <button className="btn-ghost px-2 py-1.5" title="Movimentos" onClick={() => setHistorico(p)}><History size={16} /></button>
-                        <button className="btn-ghost px-2 py-1.5" title="Editar" onClick={() => editar(p.produto_id)}><Pencil size={16} /></button>
+                        <button className="btn-primary px-2" title="Entrada" onClick={() => setEntrada(p)}><PackagePlus size={18} /></button>
+                        <button className="btn-ghost px-2" title="Ajuste de inventário" onClick={() => setAjuste(p)}><ClipboardCheck size={18} /></button>
+                        <button className="btn-ghost px-2" title="Movimentos" onClick={() => setHistorico(p)}><History size={18} /></button>
+                        <button className="btn-ghost px-2" title="Editar" onClick={() => editar(p.produto_id)}><Pencil size={18} /></button>
                       </div>
                     </td>
                   </tr>
@@ -183,8 +183,8 @@ function ProdutoForm({ produto, onFechar }: { produto: Partial<Produto> | null; 
         <Field label="Estoque mínimo"><input className="input" inputMode="decimal" value={f.estoque_minimo ?? ''} onChange={set('estoque_minimo')} /></Field>
         {!produto?.id && <Field label="Estoque inicial"><input className="input" inputMode="decimal" value={f.estoque_inicial ?? ''} onChange={set('estoque_inicial')} /></Field>}
         <Field label="Foto" className="col-span-2"><input className="input" type="file" accept="image/*" capture="environment" onChange={(e) => setFoto(e.target.files?.[0] ?? null)} /></Field>
-        <p className="col-span-2 text-xs text-slate-500">
-          Sem preço de venda, o sistema usa custo + margem ({dinheiro(sugerido)}). O preço com troca é o cobrado quando o cliente entrega a peça velha.
+        <p className="col-span-2 text-sm text-tinta-suave">
+          Sem preço de venda, o sistema usa custo + margem (<span className="numero">{dinheiro(sugerido)}</span>). O preço com troca é o cobrado quando o cliente entrega a peça velha.
         </p>
         <button className="btn-primary col-span-2" disabled={salvar.isPending}>{salvar.isPending && <Spinner />} Salvar</button>
       </form>
@@ -211,7 +211,7 @@ function EntradaModal({ produto, onFechar }: { produto: EstoqueLinha | null; onF
   return (
     <Modal aberto={!!produto} onFechar={onFechar} titulo={`Entrada · ${produto?.nome ?? ''}`}>
       <form onSubmit={(e) => { e.preventDefault(); salvar.mutate(); }} className="grid grid-cols-2 gap-3">
-        <p className="col-span-2 text-sm text-slate-500">Saldo atual: <b>{numero(produto?.saldo)}</b></p>
+        <p className="col-span-2 text-sm text-tinta-suave">Saldo atual: <b className="numero">{numero(produto?.saldo)}</b></p>
         <Field label="Quantidade *"><input className="input" required autoFocus inputMode="decimal" value={qtd} onChange={(e) => setQtd(e.target.value)} /></Field>
         <Field label="Custo unitário (R$)"><input className="input" inputMode="decimal" value={custo} onChange={(e) => setCusto(e.target.value)} /></Field>
         <Field label="Observação (nota, fornecedor)" className="col-span-2"><input className="input" value={obs} onChange={(e) => setObs(e.target.value)} /></Field>
@@ -239,11 +239,11 @@ function AjusteModal({ produto, onFechar }: { produto: EstoqueLinha | null; onFe
   return (
     <Modal aberto={!!produto} onFechar={onFechar} titulo={`Inventário · ${produto?.nome ?? ''}`}>
       <form onSubmit={(e) => { e.preventDefault(); salvar.mutate(); }} className="space-y-3">
-        <p className="text-sm text-slate-500">O sistema diz que há <b>{numero(produto?.saldo)}</b>. Informe quanto você contou na prateleira.</p>
+        <p className="text-sm text-tinta-suave">O sistema diz que há <b className="numero">{numero(produto?.saldo)}</b>. Informe quanto você contou na prateleira.</p>
         <Field label="Quantidade contada *"><input className="input" required autoFocus inputMode="decimal" value={contado} onChange={(e) => setContado(e.target.value)} /></Field>
         <Field label="Motivo"><input className="input" value={obs} onChange={(e) => setObs(e.target.value)} placeholder="Inventário, perda, avaria…" /></Field>
         {contado !== '' && (
-          <p className={`text-sm font-medium ${dif === 0 ? 'text-slate-500' : dif > 0 ? 'text-emerald-700' : 'text-red-600'}`}>
+          <p className={`text-sm font-medium ${dif === 0 ? 'text-tinta-suave' : dif > 0 ? 'text-zap-escuro' : 'text-vermelho'}`}>
             {dif === 0 ? 'Sem diferença.' : `Ajuste de ${dif > 0 ? '+' : ''}${numero(dif)}`}
           </p>
         )}
@@ -270,18 +270,18 @@ function MovimentosModal({ produto, onFechar }: { produto: EstoqueLinha | null; 
       {movs.isLoading ? <Spinner /> : (
         <table className="w-full text-sm">
           <thead><tr><th className="th">Data</th><th className="th">Tipo</th><th className="th">Origem</th><th className="th text-right">Qtd</th></tr></thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-linha">
             {movs.data?.map((m) => (
               <tr key={m.id}>
-                <td className="td">{dataHora(m.criado_em)}</td>
-                <td className="td">{TIPO_MOV[m.tipo]}{m.observacao && <span className="block text-xs text-slate-500">{m.observacao}</span>}</td>
+                <td className="td numero">{dataHora(m.criado_em)}</td>
+                <td className="td">{TIPO_MOV[m.tipo]}{m.observacao && <span className="block text-sm text-tinta-suave">{m.observacao}</span>}</td>
                 <td className="td">{ORIGEM[m.origem]}</td>
-                <td className={`td text-right font-semibold ${Number(m.quantidade) < 0 ? 'text-red-600' : 'text-emerald-700'}`}>
+                <td className={`td numero text-right font-semibold ${Number(m.quantidade) < 0 ? 'text-vermelho' : 'text-zap-escuro'}`}>
                   {Number(m.quantidade) > 0 ? '+' : ''}{numero(m.quantidade)}
                 </td>
               </tr>
             ))}
-            {!movs.data?.length && <tr><td colSpan={4} className="td text-center text-slate-500">Sem movimentos.</td></tr>}
+            {!movs.data?.length && <tr><td colSpan={4} className="td text-center text-tinta-suave">Sem movimentos.</td></tr>}
           </tbody>
         </table>
       )}

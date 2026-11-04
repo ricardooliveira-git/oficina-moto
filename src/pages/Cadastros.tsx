@@ -56,7 +56,7 @@ export function Cadastros() {
         <Bloco titulo="Tabela de serviços (mão de obra)" onNovo={() => setModal({ tabela: 'servicos_catalogo', dados: { ativo: true } })}>
           {servicos.data?.map((s) => (
             <Linha key={s.id} inativo={!s.ativo} onEditar={() => setModal({ tabela: 'servicos_catalogo', dados: { ...s } })}>
-              <span>{s.descricao}</span><b>{dinheiro(s.preco)}</b>
+              <span>{s.descricao}</span><b className="numero">{dinheiro(s.preco)}</b>
             </Linha>
           ))}
         </Bloco>
@@ -64,8 +64,8 @@ export function Cadastros() {
         <Bloco titulo="Mecânicos" onNovo={() => setModal({ tabela: 'mecanicos', dados: { ativo: true, comissao_pct: 0 } })}>
           {mecanicos.map((m) => (
             <Linha key={m.id} inativo={!m.ativo} onEditar={() => setModal({ tabela: 'mecanicos', dados: { ...m } })}>
-              <span>{m.nome} <span className="text-xs text-slate-500">{telefone(m.telefone)}</span></span>
-              {Number(m.comissao_pct) > 0 && <span className="text-sm text-slate-500">comissão {Number(m.comissao_pct)}%</span>}
+              <span>{m.nome} <span className="text-sm text-tinta-suave">{telefone(m.telefone)}</span></span>
+              {Number(m.comissao_pct) > 0 && <span className="text-sm text-tinta-suave">comissão {Number(m.comissao_pct)}%</span>}
             </Linha>
           ))}
         </Bloco>
@@ -74,14 +74,14 @@ export function Cadastros() {
           {formas.map((f) => (
             <Linha key={f.id} inativo={!f.ativo} onEditar={() => setModal({ tabela: 'formas_pagamento', dados: { ...f } })}>
               <span>{f.descricao}</span>
-              {f.gera_conta_receber && <span className="badge bg-amber-100 text-amber-700">gera fiado</span>}
+              {f.gera_conta_receber && <span className="badge bg-ambar-claro text-ambar">gera fiado</span>}
             </Linha>
           ))}
         </Bloco>
 
         {papel === 'dono' && (
-          <section className="card p-4">
-            <h2 className="mb-3 font-semibold">Dados da oficina</h2>
+          <section className="cartao p-4">
+            <h2 className="mb-3 text-lg font-bold">Dados da oficina</h2>
             <form onSubmit={(e) => { e.preventDefault(); salvarEmpresa.mutate(); }} className="grid gap-3">
               <Field label="Nome"><input className="input" required value={emp.nome} onChange={(e) => setEmp({ ...emp, nome: e.target.value })} /></Field>
               <div className="grid grid-cols-2 gap-3">
@@ -135,12 +135,12 @@ export function Cadastros() {
 
 function Bloco({ titulo, onNovo, children }: { titulo: string; onNovo: () => void; children: React.ReactNode }) {
   return (
-    <section className="card">
-      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-        <h2 className="font-semibold">{titulo}</h2>
-        <button className="btn-ghost py-1.5" onClick={onNovo}><Plus size={14} /> Novo</button>
+    <section className="cartao">
+      <div className="flex items-center justify-between border-b border-linha px-4 py-3">
+        <h2 className="text-lg font-bold">{titulo}</h2>
+        <button className="btn-ghost" onClick={onNovo}><Plus size={18} /> Novo</button>
       </div>
-      <ul className="divide-y divide-slate-100">{children}</ul>
+      <ul className="divide-y divide-linha">{children}</ul>
     </section>
   );
 }
@@ -149,7 +149,7 @@ function Linha({ children, onEditar, inativo }: { children: React.ReactNode; onE
   return (
     <li className={`flex items-center justify-between gap-3 px-4 py-2.5 text-sm ${inativo ? 'opacity-50' : ''}`}>
       <div className="flex flex-1 items-center justify-between gap-3">{children}</div>
-      <button className="text-slate-400 hover:text-slate-700" onClick={onEditar} aria-label="Editar"><Pencil size={15} /></button>
+      <button className="text-tinta-suave hover:text-tinta" onClick={onEditar} aria-label="Editar"><Pencil size={15} /></button>
     </li>
   );
 }

@@ -44,11 +44,11 @@ export function ListaOS() {
         titulo="Ordens de serviço"
         acoes={
           <>
-            <div className="inline-flex rounded-lg border border-slate-300 bg-white p-1">
-              <button className={`rounded-md px-3 py-1.5 text-sm font-semibold ${ver === 'quadro' ? 'bg-ink-900 text-white' : 'text-slate-600'}`} onClick={() => setVer('quadro')}>Na oficina</button>
-              <button className={`rounded-md px-3 py-1.5 text-sm font-semibold ${ver === 'encerradas' ? 'bg-ink-900 text-white' : 'text-slate-600'}`} onClick={() => setVer('encerradas')}>Encerradas</button>
+            <div className="segmentado">
+              <button className={`segmento ${ver === 'quadro' ? 'segmento-ativo' : ''}`} onClick={() => setVer('quadro')}>Na oficina</button>
+              <button className={`segmento ${ver === 'encerradas' ? 'segmento-ativo' : ''}`} onClick={() => setVer('encerradas')}>Encerradas</button>
             </div>
-            <button className="btn-primary" onClick={() => setParams({ nova: '1' })}><Plus size={16} /> Nova OS</button>
+            <button className="btn-primary" onClick={() => setParams({ nova: '1' })}><Plus size={18} /> Nova OS</button>
           </>
         }
       />
@@ -56,9 +56,9 @@ export function ListaOS() {
       {q.isLoading ? <div className="flex justify-center p-10"><Spinner /></div> : ver === 'quadro' ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {ATIVAS.map((st) => (
-            <section key={st} className="rounded-xl bg-slate-200/60 p-3">
+            <section key={st} className="rounded-3xl bg-linha p-3">
               <h2 className="mb-3 flex items-center justify-between px-1 text-sm font-semibold">
-                {STATUS_OS[st].nome}<span className="badge bg-white text-slate-600">{lista.filter((o) => o.status === st).length}</span>
+                {STATUS_OS[st].nome}<span className="badge numero bg-papel text-tinta-suave">{lista.filter((o) => o.status === st).length}</span>
               </h2>
               <div className="space-y-2">
                 {lista.filter((o) => o.status === st).map((o) => <CartaoOS key={o.id} o={o} />)}
@@ -67,18 +67,18 @@ export function ListaOS() {
           ))}
         </div>
       ) : (
-        <div className="card">
+        <div className="cartao">
           {!lista.length ? <Vazio texto="Nenhuma OS encerrada." /> : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-linha">
               {lista.map((o) => (
                 <li key={o.id}>
-                  <Link to={`/os/${o.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50">
+                  <Link to={`/os/${o.id}`} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-nevoa">
                     <span className="text-sm">
-                      <b>#{o.numero}</b> · {o.cliente?.nome ?? 'Sem cliente'} · {o.veiculo?.placa ?? ''} · {data(o.data_entrada)}
+                      <b className="numero">#{o.numero}</b> · {o.cliente?.nome ?? 'Sem cliente'} · {o.veiculo?.placa ?? ''} · <span className="numero">{data(o.data_entrada)}</span>
                     </span>
                     <span className="flex items-center gap-2">
                       <span className={`badge ${STATUS_OS[o.status].cor}`}>{STATUS_OS[o.status].nome}</span>
-                      <b className="text-sm">{dinheiro(o.total)}</b>
+                      <b className="numero text-sm">{dinheiro(o.total)}</b>
                     </span>
                   </Link>
                 </li>
@@ -95,18 +95,19 @@ export function ListaOS() {
 
 function CartaoOS({ o }: { o: OSResumo }) {
   const atrasada = o.previsao && o.previsao < hoje();
+  const paraHoje = o.previsao === hoje();
   return (
-    <Link to={`/os/${o.id}`} className="block rounded-lg bg-white p-3 shadow-sm ring-1 ring-slate-200 hover:ring-brand-500">
-      <div className="flex justify-between text-xs text-slate-500">
-        <span className="font-semibold text-slate-700">#{o.numero}</span>
-        {o.previsao && <span className={atrasada ? 'font-semibold text-red-600' : ''}>prev. {data(o.previsao)}</span>}
+    <Link to={`/os/${o.id}`} className="block rounded-2xl bg-papel p-3 shadow-sm ring-1 ring-linha hover:ring-azul">
+      <div className="flex justify-between text-sm text-tinta-suave">
+        <span className="numero font-semibold text-tinta">#{o.numero}</span>
+        {o.previsao && <span className={atrasada ? 'font-semibold text-vermelho' : paraHoje ? 'font-semibold text-ambar' : ''}>prev. <span className="numero">{data(o.previsao)}</span></span>}
       </div>
       <p className="mt-1 font-medium">{o.veiculo ? `${o.veiculo.placa} · ${o.veiculo.modelo ?? ''}` : 'Sem moto'}</p>
-      <p className="text-sm text-slate-600">{o.cliente?.nome ?? 'Sem cliente'}</p>
-      {o.defeito_relatado && <p className="mt-1 line-clamp-2 text-xs text-slate-500">{o.defeito_relatado}</p>}
-      <div className="mt-2 flex justify-between text-xs">
-        <span className="text-slate-500">{o.mecanico?.nome ?? ''}</span>
-        <b>{dinheiro(o.total)}</b>
+      <p className="text-sm text-tinta-suave">{o.cliente?.nome ?? 'Sem cliente'}</p>
+      {o.defeito_relatado && <p className="mt-1 line-clamp-2 text-sm text-tinta-suave">{o.defeito_relatado}</p>}
+      <div className="mt-2 flex justify-between text-sm">
+        <span className="text-tinta-suave">{o.mecanico?.nome ?? ''}</span>
+        <b className="numero">{dinheiro(o.total)}</b>
       </div>
     </Link>
   );
@@ -149,7 +150,7 @@ function NovaOS({ aberto, onFechar, clienteInicial }: { aberto: boolean; onFecha
         <Field label="Cliente" className="col-span-2">
           <div className="flex gap-2">
             <div className="flex-1"><ClienteSelect value={f.cliente_id} onChange={(id) => setF({ ...f, cliente_id: id, veiculo_id: '' })} placeholder="Escolha o cliente" /></div>
-            <button type="button" className="btn-ghost px-3" onClick={() => setNovoCliente({})} title="Novo cliente"><Plus size={16} /></button>
+            <button type="button" className="btn-ghost px-3" onClick={() => setNovoCliente({})} title="Novo cliente"><Plus size={18} /></button>
           </div>
         </Field>
         <Field label="Moto" className="col-span-2">
@@ -158,7 +159,7 @@ function NovaOS({ aberto, onFechar, clienteInicial }: { aberto: boolean; onFecha
               <option value="">{f.cliente_id ? 'Escolha a moto' : 'Escolha o cliente primeiro'}</option>
               {motos.map((m) => <option key={m.id} value={m.id}>{m.placa} {m.modelo ?? ''}</option>)}
             </select>
-            <button type="button" className="btn-ghost px-3" disabled={!f.cliente_id} onClick={() => setNovaMoto({ cliente_id: f.cliente_id })} title="Nova moto"><Plus size={16} /></button>
+            <button type="button" className="btn-ghost px-3" disabled={!f.cliente_id} onClick={() => setNovaMoto({ cliente_id: f.cliente_id })} title="Nova moto"><Plus size={18} /></button>
           </div>
         </Field>
         <Field label="Km de entrada"><input className="input" inputMode="numeric" value={f.km} onChange={(e) => setF({ ...f, km: e.target.value })} /></Field>
@@ -264,19 +265,19 @@ export function DetalheOS() {
 
   return (
     <>
-      <button className="no-print mb-3 flex items-center gap-1 text-sm text-slate-500 hover:text-slate-800" onClick={() => nav('/os')}><ArrowLeft size={16} /> Ordens de serviço</button>
+      <button className="no-print mb-3 flex items-center gap-1 text-sm text-tinta-suave hover:text-tinta" onClick={() => nav('/os')}><ArrowLeft size={18} /> Ordens de serviço</button>
       <PageHeader
         titulo={`OS #${o.numero}`}
         sub={`${o.cliente?.nome ?? 'Sem cliente'} · ${o.veiculo ? `${o.veiculo.placa} ${o.veiculo.modelo ?? ''}` : 'sem moto'} · entrada ${dataHora(o.data_entrada)}`}
         acoes={
           <>
-            <Link className="btn-ghost" to={`/imprimir/os/${o.id}`} target="_blank"><Printer size={16} /> Imprimir</Link>
+            <Link className="btn-ghost" to={`/imprimir/os/${o.id}`} target="_blank"><Printer size={18} /> Imprimir</Link>
             {whats && (
               <a className="btn-wa" target="_blank" rel="noreferrer"
                 href={linkWhatsapp(whats, o.status === 'pronta'
                   ? `Olá, ${primeiroNome}! ${moto} está pronta para retirada na ${empresa.nome}. Total: ${dinheiro(o.total)}.`
                   : `Olá, ${primeiroNome}! Aqui é da ${empresa.nome}, sobre a OS #${o.numero} da ${moto}.`)}>
-                <MessageCircle size={16} /> {o.status === 'pronta' ? 'Avisar que está pronta' : 'WhatsApp'}
+                <MessageCircle size={18} /> {o.status === 'pronta' ? 'Avisar que está pronta' : 'WhatsApp'}
               </a>
             )}
           </>
@@ -290,7 +291,7 @@ export function DetalheOS() {
               {(['aberta', 'em_execucao', 'aguardando_peca', 'pronta'] as StatusOS[]).map((st) => (
                 <button
                   key={st}
-                  className={`badge cursor-pointer px-3 py-1.5 text-sm ${o.status === st ? STATUS_OS[st].cor + ' ring-2 ring-offset-1 ring-current' : 'bg-white text-slate-500 ring-1 ring-slate-200'}`}
+                  className={`pilula ${o.status === st ? STATUS_OS[st].cor + ' ring-2 ring-offset-1 ring-current' : 'bg-papel text-tinta-suave ring-1 ring-linha'}`}
                   onClick={() => atualizar.mutate({ status: st })}
                 >
                   {STATUS_OS[st].nome}
@@ -300,23 +301,23 @@ export function DetalheOS() {
           )}
           {encerrada && <span className={`badge px-3 py-1.5 text-sm ${STATUS_OS[o.status].cor}`}>{STATUS_OS[o.status].nome}{o.data_entrega && ` em ${dataHora(o.data_entrega)}`}{o.status === 'entregue' && !o.pago && ' · com valor a receber'}</span>}
 
-          <section className="card">
-            <h2 className="flex items-center gap-2 border-b border-slate-100 px-4 py-3 font-semibold"><Package size={18} /> Peças</h2>
+          <section className="cartao">
+            <h2 className="flex items-center gap-2 border-b border-linha px-4 py-3 text-lg font-bold"><Package size={18} /> Peças</h2>
             {!encerrada && <div className="p-3"><ProdutoBusca onEscolher={(p) => addItem.mutate({ tipo: 'peca', produto_id: p.produto_id, descricao: p.nome, quantidade: 1, preco_unitario: p.preco_venda })} /></div>}
             <TabelaItens itens={pecas} encerrada={encerrada} mecanicos={mecanicos}
               onAlterar={(itemId, dados) => alterarItem.mutate({ itemId, dados })} onRemover={(i) => removerItem.mutate(i)} />
           </section>
 
-          <section className="card">
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-              <h2 className="flex items-center gap-2 font-semibold"><Wrench size={18} /> Mão de obra</h2>
-              {!encerrada && <button className="btn-ghost py-1.5" onClick={() => setAddServico(true)}><Plus size={14} /> Serviço</button>}
+          <section className="cartao">
+            <div className="flex items-center justify-between border-b border-linha px-4 py-3">
+              <h2 className="flex items-center gap-2 text-lg font-bold"><Wrench size={18} /> Mão de obra</h2>
+              {!encerrada && <button className="btn-ghost" onClick={() => setAddServico(true)}><Plus size={18} /> Serviço</button>}
             </div>
             <TabelaItens itens={maoObra} encerrada={encerrada} mecanicos={mecanicos} comMecanico
               onAlterar={(itemId, dados) => alterarItem.mutate({ itemId, dados })} onRemover={(i) => removerItem.mutate(i)} />
           </section>
 
-          <section className="card grid gap-3 p-4 sm:grid-cols-2">
+          <section className="cartao grid gap-3 p-4 sm:grid-cols-2">
             <Field label="Defeito relatado" className="sm:col-span-2"><p className="text-sm">{o.defeito_relatado || '—'}</p></Field>
             <Field label="Diagnóstico / serviço executado">
               <textarea className="input" rows={3} disabled={encerrada} value={textos.diagnostico}
@@ -331,7 +332,7 @@ export function DetalheOS() {
           </section>
         </div>
 
-        <aside className="card h-fit space-y-3 p-4 lg:sticky lg:top-6">
+        <aside className="cartao h-fit space-y-3 p-4 lg:sticky lg:top-6">
           <Field label="Mecânico responsável">
             <select className="input" disabled={encerrada} value={o.mecanico_id ?? ''} onChange={(e) => atualizar.mutate({ mecanico_id: e.target.value || null })}>
               <option value="">—</option>
@@ -341,28 +342,28 @@ export function DetalheOS() {
           <Field label="Previsão de entrega">
             <input type="date" className="input" disabled={encerrada} value={o.previsao ?? ''} onChange={(e) => atualizar.mutate({ previsao: e.target.value || null })} />
           </Field>
-          <p className="text-sm text-slate-500">Km de entrada: {o.km_entrada ? numero(o.km_entrada) : '—'}</p>
+          <p className="text-sm text-tinta-suave">Km de entrada: {o.km_entrada ? numero(o.km_entrada) : '—'}</p>
           <Field label="Desconto (R$)">
             <input className="input" inputMode="decimal" disabled={encerrada} value={textos.desconto}
               onChange={(e) => setTextos({ ...textos, desconto: e.target.value })}
               onBlur={() => num(textos.desconto) !== Number(o.desconto) && atualizar.mutate({ desconto: num(textos.desconto) })} />
           </Field>
-          <dl className="space-y-1 border-t border-slate-100 pt-3 text-sm">
-            <div className="flex justify-between"><dt>Peças</dt><dd>{dinheiro(pecas.reduce((a, i) => a + Number(i.subtotal), 0))}</dd></div>
-            <div className="flex justify-between"><dt>Mão de obra</dt><dd>{dinheiro(maoObra.reduce((a, i) => a + Number(i.subtotal), 0))}</dd></div>
-            {Number(o.desconto) > 0 && <div className="flex justify-between text-red-600"><dt>Desconto</dt><dd>-{dinheiro(o.desconto)}</dd></div>}
-            <div className="flex justify-between pt-1 text-xl font-bold"><dt>Total</dt><dd>{dinheiro(o.total)}</dd></div>
+          <dl className="space-y-1 border-t border-linha pt-3 text-sm">
+            <div className="flex justify-between"><dt>Peças</dt><dd className="numero">{dinheiro(pecas.reduce((a, i) => a + Number(i.subtotal), 0))}</dd></div>
+            <div className="flex justify-between"><dt>Mão de obra</dt><dd className="numero">{dinheiro(maoObra.reduce((a, i) => a + Number(i.subtotal), 0))}</dd></div>
+            {Number(o.desconto) > 0 && <div className="flex justify-between text-vermelho"><dt>Desconto</dt><dd className="numero">-{dinheiro(o.desconto)}</dd></div>}
+            <div className="flex justify-between pt-1 text-xl font-bold"><dt>Total</dt><dd className="numero">{dinheiro(o.total)}</dd></div>
           </dl>
           {!encerrada && (
             <>
               <button className="btn-primary w-full py-3" disabled={!lista.length} onClick={() => setPagando(true)}>
                 <CheckCircle2 size={18} /> Entregar e receber
               </button>
-              {papel !== 'mecanico' && <button className="btn-danger w-full" onClick={() => setCancelar(true)}><Ban size={16} /> Cancelar OS</button>}
+              {papel !== 'mecanico' && <button className="btn-danger w-full" onClick={() => setCancelar(true)}><Ban size={18} /> Cancelar OS</button>}
             </>
           )}
           {o.status === 'entregue' && papel !== 'mecanico' && (
-            <button className="w-full text-sm text-red-600 hover:underline" onClick={() => setCancelar(true)}>Cancelar (estorna estoque e pagamentos)</button>
+            <button className="w-full text-sm text-vermelho hover:underline" onClick={() => setCancelar(true)}>Cancelar (estorna estoque e pagamentos)</button>
           )}
         </aside>
       </div>
@@ -376,7 +377,7 @@ export function DetalheOS() {
         salvando={finalizar.isPending} onConfirmar={(p) => finalizar.mutate(p)} />
 
       <Modal aberto={cancelar} onFechar={() => setCancelar(false)} titulo={`Cancelar OS #${o.numero}`}>
-        <p className="text-sm text-slate-600">As peças que já saíram do estoque voltam e os pagamentos são estornados.</p>
+        <p className="text-sm text-tinta-suave">As peças que já saíram do estoque voltam e os pagamentos são estornados.</p>
         <button className="btn-danger mt-4 w-full" disabled={cancela.isPending} onClick={() => cancela.mutate()}>{cancela.isPending && <Spinner />} Confirmar cancelamento</button>
       </Modal>
     </>
@@ -389,24 +390,24 @@ function TabelaItens({
   itens: ItemOS[]; encerrada: boolean; mecanicos: { id: string; nome: string }[]; comMecanico?: boolean;
   onAlterar: (id: string, dados: Record<string, unknown>) => void; onRemover: (id: string) => void;
 }) {
-  if (!itens.length) return <p className="px-4 py-4 text-sm text-slate-400">Nenhum item.</p>;
+  if (!itens.length) return <p className="px-4 py-4 text-sm text-tinta-suave">Nenhum item.</p>;
   return (
-    <ul className="divide-y divide-slate-100">
+    <ul className="divide-y divide-linha">
       {itens.map((i) => (
         <li key={i.id} className="flex flex-wrap items-center gap-2 px-4 py-2">
-          <span className="min-w-0 flex-1 text-sm font-medium">{i.descricao}</span>
+          <span className="min-w-40 flex-1 text-sm font-medium">{i.descricao}</span>
           {comMecanico && (
-            <select className="input w-36 py-1" disabled={encerrada} value={i.mecanico_id ?? ''} onChange={(e) => onAlterar(i.id, { mecanico_id: e.target.value || null })}>
+            <select className="input w-36" disabled={encerrada} value={i.mecanico_id ?? ''} onChange={(e) => onAlterar(i.id, { mecanico_id: e.target.value || null })}>
               <option value="">mecânico</option>
               {mecanicos.map((m) => <option key={m.id} value={m.id}>{m.nome}</option>)}
             </select>
           )}
-          <input className="input w-16 py-1 text-center" disabled={encerrada} inputMode="decimal" defaultValue={String(i.quantidade).replace('.', ',')}
+          <input className="input w-16 text-center" disabled={encerrada} inputMode="decimal" defaultValue={String(i.quantidade).replace('.', ',')}
             onBlur={(e) => num(e.target.value) > 0 && num(e.target.value) !== Number(i.quantidade) && onAlterar(i.id, { quantidade: num(e.target.value) })} />
-          <input className="input w-24 py-1 text-right" disabled={encerrada} inputMode="decimal" defaultValue={String(i.preco_unitario).replace('.', ',')}
+          <input className="input w-24 text-right" disabled={encerrada} inputMode="decimal" defaultValue={String(i.preco_unitario).replace('.', ',')}
             onBlur={(e) => num(e.target.value) !== Number(i.preco_unitario) && onAlterar(i.id, { preco_unitario: num(e.target.value) })} />
-          <span className="w-24 text-right text-sm font-semibold">{dinheiro(i.subtotal)}</span>
-          {!encerrada && <button className="text-slate-400 hover:text-red-600" onClick={() => onRemover(i.id)} aria-label="Remover"><Trash2 size={16} /></button>}
+          <span className="numero w-24 text-right text-sm font-semibold">{dinheiro(i.subtotal)}</span>
+          {!encerrada && <button className="icone-acao" onClick={() => onRemover(i.id)} aria-label="Remover"><Trash2 size={18} /></button>}
         </li>
       ))}
     </ul>

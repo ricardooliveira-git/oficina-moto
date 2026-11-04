@@ -3,14 +3,23 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      // Valores definidos em :root (src/index.css)
       colors: {
-        brand: {
-          50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 500: '#f97316',
-          600: '#ea580c', 700: '#c2410c', 900: '#7c2d12',
-        },
-        ink: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
+        nevoa: 'var(--nevoa)',
+        papel: 'var(--papel)',
+        tinta: { DEFAULT: 'var(--tinta)', suave: 'var(--tinta-suave)' },
+        linha: 'var(--linha)',
+        noite: { DEFAULT: 'var(--noite)', azul: 'var(--noite-azul)' },
+        azul: { DEFAULT: 'var(--azul)', escuro: 'var(--azul-escuro)', claro: 'var(--azul-claro)' },
+        ciano: { DEFAULT: 'var(--ciano)', escuro: 'var(--ciano-escuro)', claro: 'var(--ciano-claro)' },
+        vermelho: { DEFAULT: 'var(--vermelho)', claro: 'var(--vermelho-claro)' },
+        ambar: { DEFAULT: 'var(--ambar)', vivo: 'var(--ambar-vivo)', claro: 'var(--ambar-claro)' },
+        zap: { DEFAULT: 'var(--zap)', escuro: 'var(--zap-escuro)', balao: 'var(--zap-balao)' },
       },
-      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+      fontFamily: {
+        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        numero: ['Space Grotesk', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],

@@ -34,34 +34,34 @@ export function Clientes() {
       <PageHeader
         titulo="Clientes e motos"
         sub={`${clientes.length} cliente(s), ${veiculos.length} moto(s)`}
-        acoes={<button className="btn-primary" onClick={() => setEditando({})}><Plus size={16} /> Novo cliente</button>}
+        acoes={<button className="btn-primary" onClick={() => setEditando({})}><Plus size={18} /> Novo cliente</button>}
       />
       <div className="mb-4"><Busca valor={busca} onChange={setBusca} placeholder="Nome, telefone, CPF ou placa" /></div>
 
-      <div className="card overflow-hidden">
+      <div className="cartao overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center p-10"><Spinner /></div>
         ) : !lista.length ? (
           <Vazio texto={busca ? 'Nenhum cliente encontrado.' : 'Cadastre o primeiro cliente.'} />
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-linha">
             {lista.map((c) => {
               const motos = veiculos.filter((v) => v.cliente_id === c.id);
               return (
-                <li key={c.id} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50">
+                <li key={c.id} className="flex items-center gap-3 px-4 py-3 hover:bg-nevoa">
                   <button className="min-w-0 flex-1 text-left" onClick={() => setAberto(c)}>
                     <p className="font-medium">{c.nome}</p>
-                    <p className="truncate text-xs text-slate-500">
+                    <p className="truncate text-sm text-tinta-suave">
                       {telefone(c.whatsapp) || 'sem telefone'}
                       {motos.length > 0 && ` · ${motos.map((m) => `${m.placa}${m.modelo ? ' ' + m.modelo : ''}`).join(', ')}`}
                     </p>
                   </button>
                   {c.whatsapp && (
                     <a className="btn-wa px-3" href={linkWhatsapp(c.whatsapp)} target="_blank" rel="noreferrer" aria-label="WhatsApp">
-                      <MessageCircle size={16} />
+                      <MessageCircle size={18} />
                     </a>
                   )}
-                  <button className="btn-ghost px-3" onClick={() => setEditando(c)} aria-label="Editar"><Pencil size={16} /></button>
+                  <button className="btn-ghost px-3" onClick={() => setEditando(c)} aria-label="Editar"><Pencil size={18} /></button>
                 </li>
               );
             })}
@@ -167,53 +167,53 @@ function ClienteDetalhe({ cliente, onFechar, onEditar }: { cliente: Cliente; onF
       <div className="mb-4 flex flex-wrap gap-2">
         {cliente.whatsapp && (
           <a className="btn-wa" href={linkWhatsapp(cliente.whatsapp, `Olá, ${cliente.nome.split(' ')[0]}! Aqui é da ${empresa.nome}.`)} target="_blank" rel="noreferrer">
-            <MessageCircle size={16} /> WhatsApp
+            <MessageCircle size={18} /> WhatsApp
           </a>
         )}
-        <button className="btn-ghost" onClick={onEditar}><Pencil size={16} /> Editar</button>
-        <Link className="btn-dark" to={`/os?nova=1&cliente=${cliente.id}`}><Plus size={16} /> Nova OS</Link>
+        <button className="btn-ghost" onClick={onEditar}><Pencil size={18} /> Editar</button>
+        <Link className="btn-dark" to={`/os?nova=1&cliente=${cliente.id}`}><Plus size={18} /> Nova OS</Link>
       </div>
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-tinta-suave">
         {telefone(cliente.whatsapp)}{cliente.endereco && ` · ${cliente.endereco}, ${cliente.numero ?? 's/n'} — ${cliente.bairro ?? ''}`}
       </p>
       {historico.data && historico.data.devendo > 0 && (
-        <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm font-medium text-amber-800">Deve {dinheiro(historico.data.devendo)} (ver Financeiro → A receber)</p>
+        <p className="mt-3 rounded-2xl bg-ambar-claro p-3 text-sm font-medium text-ambar">Deve <span className="numero">{dinheiro(historico.data.devendo)}</span> (ver Financeiro → A receber)</p>
       )}
 
       <div className="mt-5 flex items-center justify-between">
-        <h3 className="font-semibold">Motos</h3>
-        <button className="btn-ghost py-1.5" onClick={() => setMoto({ cliente_id: cliente.id })}><Plus size={14} /> Moto</button>
+        <h3 className="text-lg font-bold">Motos</h3>
+        <button className="btn-ghost" onClick={() => setMoto({ cliente_id: cliente.id })}><Plus size={18} /> Moto</button>
       </div>
-      <ul className="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">
+      <ul className="mt-2 divide-y divide-linha rounded-2xl border border-linha">
         {motos.map((m) => (
           <li key={m.id} className="flex items-center gap-3 px-3 py-2 text-sm">
-            <Bike size={18} className="text-slate-400" />
+            <Bike size={18} className="text-tinta-suave" />
             <span className="flex-1"><b>{m.placa}</b> {[m.marca, m.modelo, m.ano, m.cor].filter(Boolean).join(' · ')}{m.km_atual ? ` · ${m.km_atual.toLocaleString('pt-BR')} km` : ''}</span>
-            <button className="text-slate-400 hover:text-slate-700" onClick={() => setMoto(m)} aria-label="Editar moto"><Pencil size={15} /></button>
-            <button className="text-slate-400 hover:text-red-600" onClick={() => excluirMoto.mutate(m.id)} aria-label="Remover moto"><Trash2 size={15} /></button>
+            <button className="text-tinta-suave hover:text-tinta" onClick={() => setMoto(m)} aria-label="Editar moto"><Pencil size={15} /></button>
+            <button className="icone-acao" onClick={() => excluirMoto.mutate(m.id)} aria-label="Remover moto"><Trash2 size={15} /></button>
           </li>
         ))}
-        {!motos.length && <li className="px-3 py-3 text-sm text-slate-500">Nenhuma moto cadastrada.</li>}
+        {!motos.length && <li className="px-3 py-3 text-[15px] text-tinta-suave">Nenhuma moto cadastrada.</li>}
       </ul>
 
-      <h3 className="mt-5 font-semibold">Histórico</h3>
-      <ul className="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200 text-sm">
+      <h3 className="mt-5 text-lg font-bold">Histórico</h3>
+      <ul className="mt-2 divide-y divide-linha rounded-2xl border border-linha text-sm">
         {historico.data?.os.map((o) => (
           <li key={o.id}>
-            <Link to={`/os/${o.id}`} className="flex justify-between px-3 py-2 hover:bg-slate-50">
-              <span>OS #{o.numero} · {data(o.data_entrada)} {o.veiculo && `· ${o.veiculo.placa}`} <span className={`badge ml-1 ${STATUS_OS[o.status].cor}`}>{STATUS_OS[o.status].nome}</span></span>
-              <b>{dinheiro(o.total)}</b>
+            <Link to={`/os/${o.id}`} className="flex justify-between px-3 py-2 hover:bg-nevoa">
+              <span>OS <span className="numero">#{o.numero}</span> · <span className="numero">{data(o.data_entrada)}</span> {o.veiculo && `· ${o.veiculo.placa}`} <span className={`badge ml-1 ${STATUS_OS[o.status].cor}`}>{STATUS_OS[o.status].nome}</span></span>
+              <b className="numero">{dinheiro(o.total)}</b>
             </Link>
           </li>
         ))}
         {historico.data?.vendas.map((v) => (
           <li key={v.id} className="flex justify-between px-3 py-2">
-            <span>Venda #{v.numero} · {data(v.data)} {v.status === 'cancelada' && <span className="badge ml-1 bg-red-100 text-red-700">Cancelada</span>}</span>
-            <b>{dinheiro(v.total)}</b>
+            <span>Venda <span className="numero">#{v.numero}</span> · <span className="numero">{data(v.data)}</span> {v.status === 'cancelada' && <span className="badge ml-1 bg-vermelho-claro text-vermelho">Cancelada</span>}</span>
+            <b className="numero">{dinheiro(v.total)}</b>
           </li>
         ))}
         {historico.data && !historico.data.os.length && !historico.data.vendas.length && (
-          <li className="px-3 py-3 text-slate-500">Sem atendimentos ainda.</li>
+          <li className="px-3 py-3 text-tinta-suave">Sem atendimentos ainda.</li>
         )}
       </ul>
 

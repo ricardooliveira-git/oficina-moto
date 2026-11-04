@@ -36,16 +36,17 @@ export function Login() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-ink-900 px-4">
-      <div className="mb-8 flex items-center gap-3 text-white">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600"><Bike size={28} /></div>
+    <div className="fundo-heroi relative flex min-h-screen flex-col items-center justify-center px-4">
+      <div className="grade-tecnica pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div className="entra relative mb-8 flex items-center gap-3 text-white">
+        <div className="degrade-primario flex h-12 w-12 items-center justify-center rounded-2xl"><Bike size={28} /></div>
         <div>
           <p className="text-2xl font-bold">Oficina Moto</p>
-          <p className="text-sm text-slate-400">Estoque, vendas, OS e orçamentos</p>
+          <p className="text-sm text-white/70">Estoque, vendas, OS e orçamentos</p>
         </div>
       </div>
-      <form onSubmit={enviar} className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-        <h1 className="mb-4 text-lg font-semibold">
+      <form onSubmit={enviar} className="cartao entra relative w-full max-w-sm p-6">
+        <h1 className="mb-4 text-lg font-bold">
           {modo === 'entrar' ? 'Entrar' : modo === 'criar' ? 'Criar conta' : 'Recuperar senha'}
         </h1>
         <label className="label">E-mail</label>
@@ -60,19 +61,19 @@ export function Login() {
             />
           </>
         )}
-        {msg && <p className={`mb-3 rounded-lg p-3 text-sm ${msg.erro ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-800'}`}>{msg.t}</p>}
-        <button className="btn-primary w-full py-2.5" disabled={carregando}>
+        {msg && <p className={`mb-3 rounded-2xl p-3 text-sm ${msg.erro ? 'bg-vermelho-claro font-medium text-vermelho' : 'bg-zap-balao text-zap-escuro'}`}>{msg.t}</p>}
+        <button className="btn-primary w-full" disabled={carregando}>
           {carregando && <Spinner />}
           {modo === 'entrar' ? 'Entrar' : modo === 'criar' ? 'Criar conta' : 'Enviar link'}
         </button>
         <div className="mt-4 flex justify-between text-sm">
           {modo !== 'entrar' ? (
-            <button type="button" className="text-brand-700 hover:underline" onClick={() => setModo('entrar')}>Já tenho conta</button>
+            <button type="button" className="text-azul-escuro hover:underline" onClick={() => setModo('entrar')}>Já tenho conta</button>
           ) : (
-            <button type="button" className="text-brand-700 hover:underline" onClick={() => setModo('criar')}>Criar conta</button>
+            <button type="button" className="text-azul-escuro hover:underline" onClick={() => setModo('criar')}>Criar conta</button>
           )}
           {modo === 'entrar' && (
-            <button type="button" className="text-slate-500 hover:underline" onClick={() => setModo('esqueci')}>Esqueci a senha</button>
+            <button type="button" className="text-tinta-suave hover:underline" onClick={() => setModo('esqueci')}>Esqueci a senha</button>
           )}
         </div>
       </form>

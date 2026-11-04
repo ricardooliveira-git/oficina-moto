@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 export function PageHeader({ titulo, sub, acoes }: { titulo: string; sub?: string; acoes?: ReactNode }) {
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-ink-900">{titulo}</h1>
-        {sub && <p className="mt-0.5 text-sm text-slate-500">{sub}</p>}
+        <h1 className="text-2xl font-bold tracking-tight text-tinta">{titulo}</h1>
+        {sub && <p className="mt-0.5 text-sm text-tinta-suave">{sub}</p>}
       </div>
       {acoes && <div className="flex flex-wrap gap-2">{acoes}</div>}
     </div>
@@ -34,27 +35,28 @@ export function Modal({
     return () => window.removeEventListener('keydown', esc);
   }, [aberto, onFechar]);
   if (!aberto) return null;
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4" onMouseDown={onFechar}>
       <div
-        className={`max-h-[92vh] w-full ${largura} overflow-y-auto rounded-t-2xl bg-white shadow-xl sm:rounded-2xl`}
+        className={`max-h-[92vh] w-full ${largura} modal-entra overflow-y-auto rounded-t-3xl bg-papel shadow-xl sm:rounded-3xl`}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-5 py-3">
-          <h2 className="text-lg font-semibold">{titulo}</h2>
-          <button onClick={onFechar} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100" aria-label="Fechar">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-linha bg-papel px-5 py-3">
+          <h2 className="text-lg font-bold">{titulo}</h2>
+          <button onClick={onFechar} className="flex min-h-10 min-w-10 items-center justify-center rounded-2xl text-tinta-suave hover:bg-nevoa" aria-label="Fechar">
             <X size={20} />
           </button>
         </div>
         <div className="p-5">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
 export function Vazio({ texto, acao }: { texto: string; acao?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center gap-3 px-4 py-12 text-center text-sm text-slate-500">
+    <div className="flex flex-col items-center gap-3 px-4 py-12 text-center text-sm text-tinta-suave">
       <p>{texto}</p>
       {acao}
     </div>
@@ -73,10 +75,10 @@ export function Busca({ valor, onChange, placeholder = 'Buscar…' }: { valor: s
 
 export function Stat({ titulo, valor, detalhe, destaque }: { titulo: string; valor: ReactNode; detalhe?: ReactNode; destaque?: boolean }) {
   return (
-    <div className={`card p-4 ${destaque ? 'border-brand-200 bg-brand-50' : ''}`}>
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{titulo}</p>
-      <p className="mt-1 text-2xl font-bold text-ink-900">{valor}</p>
-      {detalhe && <p className="mt-1 text-xs text-slate-500">{detalhe}</p>}
+    <div className={`cartao p-4 ${destaque ? 'border-azul-claro bg-azul-claro' : ''}`}>
+      <p className="text-sm font-semibold text-tinta-suave">{titulo}</p>
+      <p className="numero mt-1 text-xl font-bold text-tinta sm:text-2xl">{valor}</p>
+      {detalhe && <p className="mt-1 text-sm text-tinta-suave">{detalhe}</p>}
     </div>
   );
 }
@@ -100,11 +102,11 @@ export function AvisoProvider({ children }: { children: ReactNode }) {
         {lista.map((a) => (
           <div
             key={a.id}
-            className={`pointer-events-auto flex max-w-md items-start gap-2 rounded-xl px-4 py-3 text-sm font-medium text-white shadow-lg ${
-              a.tipo === 'ok' ? 'bg-ink-900' : 'bg-red-600'
+            className={`entra pointer-events-auto flex max-w-md items-start gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-white shadow-lg ${
+              a.tipo === 'ok' ? 'bg-noite' : 'bg-vermelho'
             }`}
           >
-            {a.tipo === 'ok' ? <CheckCircle2 size={18} className="shrink-0 text-emerald-400" /> : <AlertTriangle size={18} className="shrink-0" />}
+            {a.tipo === 'ok' ? <CheckCircle2 size={18} className="shrink-0 text-ciano" /> : <AlertTriangle size={18} className="shrink-0" />}
             {a.texto}
           </div>
         ))}

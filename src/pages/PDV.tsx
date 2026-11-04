@@ -82,11 +82,11 @@ export function PDV() {
       <PageHeader
         titulo="Vender"
         acoes={
-          <div className="inline-flex rounded-lg border border-slate-300 bg-white p-1">
+          <div className="segmentado">
             {(['normal', 'troca'] as const).map((t) => (
               <button
                 key={t}
-                className={`rounded-md px-4 py-1.5 text-sm font-semibold ${c.tipo === t ? 'bg-ink-900 text-white' : 'text-slate-600'}`}
+                className={`segmento ${c.tipo === t ? 'segmento-ativo' : ''}`}
                 onClick={() => setC((v) => ({ ...v, tipo: t, itens: [] }))}
                 title={c.itens.length ? 'Trocar o tipo esvazia o carrinho' : ''}
               >
@@ -100,37 +100,37 @@ export function PDV() {
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <section className="space-y-4">
           <ProdutoBusca onEscolher={adicionar} tipo={c.tipo} />
-          <div className="card overflow-hidden">
+          <div className="cartao overflow-hidden">
             {!c.itens.length ? (
-              <div className="flex flex-col items-center gap-2 py-16 text-slate-400">
+              <div className="flex flex-col items-center gap-2 py-16 text-tinta-suave">
                 <ShoppingCart size={36} />
                 <p className="text-sm">Busque um produto ou leia o código de barras.</p>
               </div>
             ) : (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-linha">
                 {c.itens.map((i) => (
                   <li key={i.produto_id} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-40 flex-1">
                       <p className="font-medium">{i.nome}</p>
-                      <p className={`text-xs ${i.quantidade > i.saldo ? 'text-red-600' : 'text-slate-500'}`}>
-                        {dinheiro(i.preco)} un. · estoque {numero(i.saldo)}
+                      <p className={`text-sm ${i.quantidade > i.saldo ? 'text-vermelho' : 'text-tinta-suave'}`}>
+                        <span className="numero">{dinheiro(i.preco)}</span> un. · estoque <span className="numero">{numero(i.saldo)}</span>
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
-                      <button className="btn-ghost px-2 py-1" onClick={() => altera(i.produto_id, (x) => (x.quantidade > 1 ? { ...x, quantidade: x.quantidade - 1 } : null))}><Minus size={14} /></button>
+                      <button className="btn-ghost px-2" onClick={() => altera(i.produto_id, (x) => (x.quantidade > 1 ? { ...x, quantidade: x.quantidade - 1 } : null))}><Minus size={18} /></button>
                       <input
-                        className="input w-16 py-1 text-center" inputMode="decimal" value={i.quantidade}
+                        className="input w-16 text-center" inputMode="decimal" value={i.quantidade}
                         onChange={(e) => altera(i.produto_id, (x) => ({ ...x, quantidade: Math.max(num(e.target.value), 0) }))}
                       />
-                      <button className="btn-ghost px-2 py-1" onClick={() => altera(i.produto_id, (x) => ({ ...x, quantidade: x.quantidade + 1 }))}><Plus size={14} /></button>
+                      <button className="btn-ghost px-2" onClick={() => altera(i.produto_id, (x) => ({ ...x, quantidade: x.quantidade + 1 }))}><Plus size={18} /></button>
                     </div>
                     <input
-                      className="input w-24 py-1 text-right" inputMode="decimal" title="Preço unitário"
+                      className="input w-24 text-right" inputMode="decimal" title="Preço unitário"
                       value={String(i.preco).replace('.', ',')}
                       onChange={(e) => altera(i.produto_id, (x) => ({ ...x, preco: num(e.target.value) }))}
                     />
-                    <p className="w-24 text-right font-semibold">{dinheiro(i.quantidade * i.preco)}</p>
-                    <button className="text-slate-400 hover:text-red-600" onClick={() => altera(i.produto_id, () => null)} aria-label="Remover"><Trash2 size={16} /></button>
+                    <p className="numero w-24 text-right font-semibold">{dinheiro(i.quantidade * i.preco)}</p>
+                    <button className="icone-acao" onClick={() => altera(i.produto_id, () => null)} aria-label="Remover"><Trash2 size={18} /></button>
                   </li>
                 ))}
               </ul>
@@ -138,7 +138,7 @@ export function PDV() {
           </div>
         </section>
 
-        <aside className="card h-fit space-y-4 p-4 lg:sticky lg:top-6">
+        <aside className="cartao h-fit space-y-4 p-4 lg:sticky lg:top-6">
           <Field label="Cliente"><ClienteSelect value={c.cliente_id} onChange={(id) => setC({ ...c, cliente_id: id })} /></Field>
           {c.tipo === 'troca' && (
             <Field label="Mecânico">
@@ -149,15 +149,15 @@ export function PDV() {
             </Field>
           )}
           <Field label="Desconto (R$)"><input className="input" inputMode="decimal" value={c.desconto} onChange={(e) => setC({ ...c, desconto: e.target.value })} /></Field>
-          <dl className="space-y-1 border-t border-slate-100 pt-3 text-sm">
-            <div className="flex justify-between"><dt>Subtotal</dt><dd>{dinheiro(subtotal)}</dd></div>
-            {desconto > 0 && <div className="flex justify-between text-red-600"><dt>Desconto</dt><dd>-{dinheiro(desconto)}</dd></div>}
-            <div className="flex justify-between pt-1 text-xl font-bold"><dt>Total</dt><dd>{dinheiro(total)}</dd></div>
+          <dl className="space-y-1 border-t border-linha pt-3 text-sm">
+            <div className="flex justify-between"><dt>Subtotal</dt><dd className="numero">{dinheiro(subtotal)}</dd></div>
+            {desconto > 0 && <div className="flex justify-between text-vermelho"><dt>Desconto</dt><dd className="numero">-{dinheiro(desconto)}</dd></div>}
+            <div className="flex justify-between pt-1 text-xl font-bold"><dt>Total</dt><dd className="numero">{dinheiro(total)}</dd></div>
           </dl>
           <button className="btn-primary w-full py-3 text-base" disabled={!c.itens.length || c.itens.some((i) => i.quantidade <= 0)} onClick={() => setPagando(true)}>
-            Receber {dinheiro(total)}
+            Receber <span className="numero">{dinheiro(total)}</span>
           </button>
-          {c.itens.length > 0 && <button className="w-full text-sm text-slate-500 hover:underline" onClick={() => setC({ ...VAZIO, tipo: c.tipo })}>Limpar carrinho</button>}
+          {c.itens.length > 0 && <button className="w-full text-sm text-tinta-suave hover:underline" onClick={() => setC({ ...VAZIO, tipo: c.tipo })}>Limpar carrinho</button>}
         </aside>
       </div>
 
@@ -168,16 +168,16 @@ export function PDV() {
 
       <Modal aberto={!!feita} onFechar={() => setFeita(null)} titulo="Venda concluída">
         <div className="flex flex-col items-center gap-2 text-center">
-          <CheckCircle2 size={48} className="text-emerald-500" />
-          <p className="text-lg font-semibold">Venda #{feita?.numero} · {dinheiro(feita?.total)}</p>
-          <p className="text-sm text-slate-500">Estoque baixado automaticamente.</p>
+          <CheckCircle2 size={48} className="text-zap" />
+          <p className="text-lg font-bold">Venda <span className="numero">#{feita?.numero}</span> · <span className="numero">{dinheiro(feita?.total)}</span></p>
+          <p className="text-sm text-tinta-suave">Estoque baixado automaticamente.</p>
         </div>
         <div className="mt-5 grid gap-2">
-          <Link className="btn-dark" to={`/imprimir/venda/${feita?.id}`} target="_blank"><Printer size={16} /> Imprimir cupom</Link>
+          <Link className="btn-dark" to={`/imprimir/venda/${feita?.id}`} target="_blank"><Printer size={18} /> Imprimir cupom</Link>
           {clienteFeita?.whatsapp && (
             <a className="btn-wa" target="_blank" rel="noreferrer"
               href={linkWhatsapp(clienteFeita.whatsapp, `Olá, ${clienteFeita.nome.split(' ')[0]}! Obrigado pela compra na ${empresa.nome}. Venda #${feita?.numero}: ${dinheiro(feita?.total)}.`)}>
-              <MessageCircle size={16} /> Enviar no WhatsApp
+              <MessageCircle size={18} /> Enviar no WhatsApp
             </a>
           )}
           <button className="btn-primary" onClick={() => setFeita(null)}>Nova venda</button>
@@ -220,22 +220,22 @@ export function VendaPendente() {
   return (
     <>
       <PageHeader titulo="Fechar venda do orçamento" sub={`${v.cliente?.nome ?? 'Sem cliente'} · ${v.tipo === 'troca' ? 'com troca' : 'venda'}`} />
-      <div className="card max-w-xl">
-        <ul className="divide-y divide-slate-100">
+      <div className="cartao max-w-xl">
+        <ul className="divide-y divide-linha">
           {v.itens.map((i) => (
             <li key={i.id} className="flex justify-between px-4 py-2 text-sm">
-              <span>{numero(i.quantidade)} × {i.produto.nome}</span><b>{dinheiro(i.subtotal)}</b>
+              <span><span className="numero">{numero(i.quantidade)}</span> × {i.produto.nome}</span><b className="numero">{dinheiro(i.subtotal)}</b>
             </li>
           ))}
         </ul>
-        <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3">
-          <span className="text-lg font-bold">{dinheiro(v.total)}</span>
+        <div className="flex items-center justify-between border-t border-linha px-4 py-3">
+          <span className="numero text-lg font-bold">{dinheiro(v.total)}</span>
           {v.status === 'carrinho' ? (
             <div className="flex gap-2">
               <button className="btn-ghost" onClick={() => descartar.mutate()}>Descartar</button>
               <button className="btn-primary" onClick={() => setPagando(true)}>Receber</button>
             </div>
-          ) : <span className="badge bg-emerald-100 text-emerald-700">Já finalizada</span>}
+          ) : <span className="badge bg-zap-balao text-zap-escuro">Já finalizada</span>}
         </div>
       </div>
       <PagamentoModal aberto={pagando} onFechar={() => setPagando(false)} total={Number(v.total)} temCliente={!!v.cliente_id}

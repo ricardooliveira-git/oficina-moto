@@ -57,27 +57,27 @@ export function Vendas() {
         <Stat titulo="Ticket médio" valor={dinheiro(linhas.length ? total / linhas.length : 0)} />
       </div>
 
-      <div className="card overflow-x-auto">
+      <div className="cartao overflow-x-auto">
         {q.isLoading ? <div className="flex justify-center p-10"><Spinner /></div> : !linhas.length ? <Vazio texto="Nenhuma venda no período." /> : (
           <table className="w-full min-w-[640px]">
-            <thead className="border-b border-slate-200 bg-slate-50">
+            <thead className="border-b border-linha bg-nevoa">
               <tr><th className="th">Nº</th><th className="th">Data</th><th className="th">Cliente</th><th className="th">Pagamento</th><th className="th text-right">Total</th><th className="th"></th></tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-linha">
               {linhas.map((l) => (
                 <tr key={l.venda_id}>
-                  <td className="td font-semibold">#{l.numero}{l.tipo === 'troca' && <span className="badge ml-2 bg-purple-100 text-purple-700">troca</span>}</td>
-                  <td className="td">{data(l.data)}</td>
+                  <td className="td font-semibold"><span className="numero">#{l.numero}</span>{l.tipo === 'troca' && <span className="badge ml-2 bg-ciano-claro text-ciano-escuro">troca</span>}</td>
+                  <td className="numero td">{data(l.data)}</td>
                   <td className="td">{l.cliente ?? '—'}</td>
                   <td className="td">
                     {l.formas ?? '—'}
-                    {l.status === 'a_receber' && <span className="badge ml-2 bg-amber-100 text-amber-700">a receber</span>}
+                    {l.status === 'a_receber' && <span className="badge ml-2 bg-ambar-claro text-ambar">a receber</span>}
                   </td>
-                  <td className="td text-right font-semibold">{dinheiro(l.total)}</td>
+                  <td className="td numero text-right font-semibold">{dinheiro(l.total)}</td>
                   <td className="td">
                     <div className="flex justify-end gap-1">
-                      <Link to={`/imprimir/venda/${l.venda_id}`} target="_blank" className="btn-ghost px-2 py-1.5" title="Imprimir"><Printer size={16} /></Link>
-                      {papel !== 'mecanico' && <button className="btn-danger px-2 py-1.5" title="Cancelar" onClick={() => setCancelar(l)}><Ban size={16} /></button>}
+                      <Link to={`/imprimir/venda/${l.venda_id}`} target="_blank" className="btn-ghost px-2" title="Imprimir"><Printer size={18} /></Link>
+                      {papel !== 'mecanico' && <button className="btn-danger px-2" title="Cancelar" onClick={() => setCancelar(l)}><Ban size={18} /></button>}
                     </div>
                   </td>
                 </tr>
@@ -88,7 +88,7 @@ export function Vendas() {
       </div>
 
       <Modal aberto={!!cancelar} onFechar={() => setCancelar(null)} titulo={`Cancelar venda #${cancelar?.numero}`}>
-        <p className="mb-3 text-sm text-slate-600">Os produtos voltam para o estoque e os pagamentos são estornados. Nada é apagado: fica o registro.</p>
+        <p className="mb-3 text-sm text-tinta-suave">Os produtos voltam para o estoque e os pagamentos são estornados. Nada é apagado: fica o registro.</p>
         <Field label="Motivo"><input className="input" value={motivo} onChange={(e) => setMotivo(e.target.value)} /></Field>
         <button className="btn-danger mt-4 w-full" disabled={cancela.isPending} onClick={() => cancela.mutate()}>{cancela.isPending && <Spinner />} Cancelar venda</button>
       </Modal>
